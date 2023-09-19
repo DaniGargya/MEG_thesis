@@ -27,6 +27,8 @@
 
 *Websites*
 - https://www.transformineducation.org/
+- https://www.creativeuniversities.com/post/what-s-critical-creative-pedagogy
+- 
 
 
 
@@ -34,5 +36,6 @@
 
 - Katja Brundiers (Wife of Arnim, Sustainability Research and Education)
 - Anke Schwittay (Critical hope)
-- Paul Brand: critical-creative pedagogy
+- Paul Braund: critical-creative pedagogy
+- Perpetua Kirby/ Rebecca Webb
 - Pfisterer (Uni Freiburg?)
