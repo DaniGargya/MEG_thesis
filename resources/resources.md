@@ -6,10 +6,12 @@
 
 
 *Books*
-
+- Anje Schwittay: Creative universities - Re-imaginging education
 - bell hooks: teaching to transgress
 - Paolo Freire: pedagogies of hope, courage and persistence
-- C.K. Gibson-Graham:
+- C.K. Gibson-Graham: academic subjects of possibility, generative theorising
+- Sarah Amsler, Keri Facer: Dreaming in steps, rather than lepas; Futurity and regimes of anticipation
+- Arturo Escobar: designing pluriversal alternatives
 - 
 
 *Organisations/ Institutions*
@@ -24,3 +26,5 @@
 
 - Katja Brundiers (Wife of Arnim, Sustainability Research and Education)
 - Anke Schwittay (Critical hope)
+- Paul Brand: critical-creative pedagogy
+- Pfisterer (Uni Freiburg?)
