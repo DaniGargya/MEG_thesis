@@ -6,10 +6,13 @@
 library(tidyverse)
 library(ggplot2)
 library(dplyr) 
+library(haven) # to transform data from sav to csv
+library(readr) # to transform data from sav to csv
 
 # workflow ----
 # data conversion Lisa
 # import new data and formating (from webside)
+# allocate groups (0,1,2)
 # data cleaning
 ### exclude imcomplete data?
 ### exclude data with more than 25% missing (6 answers)
@@ -17,7 +20,7 @@ library(dplyr)
 # data transformation
 ### scaling according to Lisa (0-3, instead of 1-4)
 ### inverse scales to reflect meaning
-# allocate groups (0,1,2)
+
 
 # data conversion Lisas data from sav to csv ----
 ### import and convert lisas data from sav to csv
@@ -358,15 +361,13 @@ ds = ds_tmp
 rm(ds_tmp)
 
 ### assign groups ----
-ds <- ds_filtered %>%
+ds <- ds %>%
   mutate(Group = ifelse(WD02_01, "group2", ifelse(WD02_03, "group0", "group1")))
 
 # count occurences
 value_counts <- ds %>%
   count(Group)  # Count occurrences of each value in col1
 
-# Print the value counts
-print(value_counts)
 
 # ??exclude incomplete data ----
 # Remove unnecessary columns with NA
@@ -383,22 +384,23 @@ count_nas <- function(row) {
 ds$count_nas <- apply(ds, 1, count_nas)
 
 # Filter the data frame to exclude rows with more than ??? NAs?
-#ds_filtered <- ds[ds$count_nas <= 20, ]
+ds_filtered <- ds[ds$count_nas <= 20, ]
 
 
-# ??exclude data with more than 25% missing (6 answers) ----
-###### more than 6 times I don't know or does it change because more questions??!
+# ??exclude data with more than 25% missing (8 answers) ----
+###### more than 8 times I don't know or does it change because more questions??!
 # Function to count the number of -1s in a row
 count_minus_ones <- function(row) {
   sum(row == -1, na.rm = TRUE)
 }
 
-ds$count_minus_ones <- apply(ds, 1, count_minus_ones)
+ds_filtered$count_minus_ones <- apply(ds_filtered, 1, count_minus_ones)
 
-# Filter the data frame to exclude rows with more than six -1s
-ds_filtered <- ds[ds$count_minus_ones <= 6, ]
-# ?? exclude data with less than 4 minutes  (240 sec) processing time ----
-ds_filtered <- ds_filtered[ds_filtered$TIME_SUM >= 240, ]
+# Filter the data frame to exclude rows with more than eight -1s
+ds_filtered <- ds_filtered[ds_filtered$count_minus_ones <= 8, ]
+# ?? exclude data with less than 4 minutes  (240 sec) or 150sec! processing time ----
+#ds_filtered <- ds_filtered[ds_filtered$TIME_SUM >= 240, ]
+ds_filtered <- ds_filtered[ds_filtered$TIME_SUM >= 150, ]
 
 
 # data transformation # scaling according to Lisa (0-3, instead of 1-4) ----
@@ -413,6 +415,15 @@ convert_values <- function(x) {
   return(x)
 }
 #### leave all other numbers the same!!!!!!
+
+convert_values2 <- function(x) {
+  x <- ifelse(x == 4, 3,
+              ifelse(x == 3, 2,
+                     ifelse(x == 2, 1,
+                            ifelse(x == 1, 0,
+                                   ifelse(x == -1, -100, x)))))
+  return(x)
+}
 
 # Apply the function to all columns of the data frame
 ds_scaled <- lapply(ds_filtered, convert_values)
@@ -443,4 +454,11 @@ ds_scaled_in <- inverse_scale_and_add_columns(ds_scaled, c("AT01_02", "B001_03",
 # save formated dataset as csv ----
 write_csv(x=ds_scaled_in, path="data/data_collection/angell_mzp3.csv")
 
-# calculate mean values for each TPB ----
+
+# checking ----
+# for time 150-240 sec
+filtered_df <- subset(ds_filtered, TIME_SUM >= 150 & TIME_SUM <= 240)
+
+# for groups
+value_counts2 <- ds_filtered %>%
+  count(Group)
