@@ -47,9 +47,9 @@ write_csv(x=lisa_data_angell_post, path="data/data_collection/data_pauli/angell_
 
 # import new data and formating ----
 ## copied from scoscie website: GNU R-SCript für Daten-Import
-ds_file = file.choose("data/data_collection/rdata_KRSumfrage_2024-06-04_13-09.csv")
+ds_file = file.choose("data/data_collection/rdata_KRSumfrage_2024-06-07_10-21.csv")
 # setwd("./")
-# ds_file = "rdata_KRSumfrage_2024-06-04_13-11.csv"
+#ds_file = "rdata_KRSumfrage_2024-06-07_10-21.csv"
 options(encoding = "UTF-8")
 ds = read.delim(
   file=ds_file, encoding="UTF-8", fileEncoding="UTF-8",
