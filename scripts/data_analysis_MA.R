@@ -14,6 +14,7 @@
 library(tidyverse)
 library(ggplot2)
 library(RColorBrewer)
+library(ggthemes) # for data visualisation
 
 
 
@@ -157,7 +158,7 @@ long_df_t1 <- selected_columns_t1 %>%
     )
 
 # Combine the data frames
-combined_df <- rbind(long_df_t1, long_df_t2, long_df_t3)
+combined_df <- rbind(long_df_t1, long_df_t2, long_df_t3) #1617 obs.
 
 # Convert Group, Category and TP to factors
 combined_df$Group <- as.factor(combined_df$Group)
@@ -202,11 +203,68 @@ results_kw <- results_kw %>%
 
 
 # RQ3 SW and TPB ----
+# Scatter plot to visualize the relationship
+plot(mzp3_clean$TPB_mean, mzp3_clean$SW_mean, main = "Scatter plot of TPB_mean vs SW_mean", xlab = "TPB", ylab = "SW")
+
+# Shapiro-Wilk normality test
+shapiro.test(mzp3_clean$TPB_mean) #normally distributed p>0.05
+shapiro.test(mzp3_clean$SW_mean) #not normally distributed p<0.05
+
+# Pearson correlation (but not normally distributed data, so not useful?)
 correlation_SW <- cor(mzp3_clean$TPB_mean, mzp3_clean$SW_mean)
 print(correlation_SW)
 
+# Spearman correlation
+spearman_cor <- cor(mzp3_clean$TPB_mean, mzp3_clean$SW_mean, method = "spearman")
+print(paste("Spearman correlation:", spearman_cor))
+# 0.79 -> strong
+
+spearman_test <- cor.test(mzp3_clean$TPB_mean, mzp3_clean$SW_mean, method = "spearman")
+print(spearman_test)
+spearman_cor <- spearman_test$estimate
+spearman_pval <- spearman_test$p.value
+# p value rejects 0 hypothesis of no correlation -> relevant
+
+# Kendall correlation
+kendall_cor <- cor(mzp3_clean$TPB_mean, mzp3_clean$SW_mean, method = "kendall")
+print(paste("Kendall correlation:", kendall_cor))
+# 0.81 -> very strong
+
+# Perform Kendall's tau correlation test
+kendall_test <- cor.test(mzp3_clean$TPB_mean, mzp3_clean$SW_mean, method = "kendall")
+print(kendall_test)
+# p value rejects 0 hypothesis of no correlation -> relevant
+
+# Plot with annotation (SPEARMAN)
+(graph_cor_rq3 <-ggplot(mzp3_clean, aes(x = TPB_mean, y = SW_mean)) +
+  geom_point(alpha = 0.5, size = 2, color = "#7CFC00") +
+  geom_smooth(method = "lm", se = FALSE, color = "#A6761D") +
+  ylim(0, 3) + 
+  theme_clean() +
+  annotate("text", size = 2, x = 1, y = 2.5, label = paste("Spearman's rho:", round(spearman_cor, 2), "\n p-value:", round(spearman_pval, 3))) +
+  labs(x = "\nMean Sustainability competences", y = "Mean Self-efficacy beliefs\n"))
+
+ggsave(graph_cor_rq3, file = "outputs/graph_cor_rq3.png", width = 7, height = 5)
 
 
+
+# clean theme ----
+theme_clean <- function(){
+  theme_bw() +
+    theme(axis.text.x = element_text(size = 14),
+          axis.text.y = element_text(size = 14),
+          axis.title.x = element_text(size = 14, face = "plain"),             
+          axis.title.y = element_text(size = 14, face = "plain"),             
+          panel.grid.major.x = element_blank(),                                          
+          panel.grid.minor.x = element_blank(),
+          panel.grid.minor.y = element_blank(),
+          panel.grid.major.y = element_blank(),  
+          plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), units = , "cm"),
+          plot.title = element_text(size = 15, vjust = 1, hjust = 0.5),
+          legend.text = element_text(size = 12, face = "italic"),          
+          legend.title = element_text(size = 12, face = "bold"),                              
+          legend.position = c(0.2, 0.8))
+}
 
 
 
