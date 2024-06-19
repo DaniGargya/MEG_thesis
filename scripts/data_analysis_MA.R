@@ -180,6 +180,51 @@ normality_results <- relevant_columns %>%
   summarise(p_value = shapiro.test(Value)$p.value)
 
 
+
+### calculating internal validity with cronbach alpha ----
+# + stichprobengröße? siehe Seite 69 MA
+library(psych)
+# Convert -100 to NA
+mzp3_cleaner[mzp3_cleaner == -100] <- NA
+
+# Get column names with _inverse
+columns_with_inverse <- grep("_inverse$", names(mzp3_cleaner), value = TRUE)
+# Remove "_inverse" from column names
+columns_to_exclude_without_inverse <- gsub("_inverse", "", columns_with_inverse)
+
+filtered_df_cronbach <- mzp3_cleaner %>%
+  select(matches("_0[1-9]$|_10$|_inverse"), -matches("WD")) %>%
+  select(-one_of(columns_to_exclude_without_inverse))
+
+
+
+# Handle missing values by dropping rows with NAs
+#filtered_df_cronbach <- filtered_df_cronbach %>%
+ # na.omit()
+
+filtered_df_cronbach <- filtered_df_cronbach %>% 
+  mutate(across(everything(), ~ ifelse(is.na(.), mean(., na.rm = TRUE), .)))
+
+# Group the columns based on the first two letters of the column name
+groups <- split.default(filtered_df_cronbach, sub("^(..).*", "\\1", names(filtered_df_cronbach)))
+
+
+# Calculate Cronbach's alpha for each group
+alpha_results <- lapply(groups, function(x) {
+  result <- alpha(x)
+  result$total$raw_alpha  # Extracting raw alpha from the result
+})
+
+
+# Create a dataframe with scale names and Cronbach's alpha values
+df_alpha <- data.frame(
+  Scale = names(alpha_results),
+  Alpha = unlist(alpha_results)
+)
+
+
+
+
 # Conduct Kruskal-Wallis test for each Category ----
 #write_csv(x=combined_df, path="data/data_collection/combined_df.csv")
 
@@ -199,10 +244,137 @@ results_kw <- results_kw %>%
 
 
 
-# RQ2 Groups and categories scale ----
+# RQ1 Groups and categories Kruskal Wallis test ----
+# Perform Kruskal-Wallis test for each competence and time point
+rq1_kw_group_category <- combined_df %>%
+  filter(Group != "group1") %>% #exclude group 1 from analysis
+  group_by(Category, Time_Point) %>%
+  summarise(
+    kruskal_p = kruskal.test(MeanValue ~ Group)$p.value,
+    .groups = 'drop')
+
+results_rq1_kw_test <- print(rq1_kw_group_category)
+
+# Merge the p-values back into the original dataframe for plotting
+combined_df <- combined_df %>%
+  filter(Group != "group1") %>% #exclude group 1 from analysis
+  left_join(rq1_kw_group_category, by = c("Category", "Time_Point"))
+
+# Plot the data - violin plot ----
+ggplot(combined_df, aes(x = Group, y = MeanValue, fill = Group)) +
+  geom_boxplot() +
+  geom_violin(alpha = 0.3) +
+  facet_grid(Time_Point ~ Category) +
+  labs(title = "Comparison of Groups by Competences and Time Points",
+       x = "Group",
+       y = "MeanValue") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  geom_text(data = rq1_kw_group_category, aes(x = 1.5, y = max(combined_df$MeanValue), label = paste("p =", round(kruskal_p, 3))), inherit.aes = FALSE)
 
 
-# RQ3 SW and TPB ----
+
+#
+
+# Plot the data
+(rq1_graph_categories_groups <- ggplot(combined_df, aes(x = Time_Point, y = MeanValue, group = Group, color = Group)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~ Category, scales = "free_y") +
+  labs(title = "Comparison of Groups by Competences and Time Points",
+       x = "Time Point",
+       y = "Value",
+       color = "Group") +
+  theme_minimal() +
+  theme(legend.position = "bottom"))
+
+ggsave(rq1_graph_categories_groups, file = "outputs/rq1_graph_categories_groups.png", width = 7, height = 5)
+
+#### prettier graph?
+# Calculate the means for each Group, Competence, and TimePoint
+# adding error bars
+# excluding irrelevant groups
+df_means <- combined_df %>%
+  filter(!Category %in% c("SW_Mean", "CS_Mean", "SW_CS_Mean")) %>% #exclude irrelevant categories for this analysis
+  group_by(Group, Category, Time_Point) %>%
+  summarise(MeanValue2 = mean(MeanValue), 
+            LowerCI = MeanValue2 - qt(0.975, length(MeanValue) - 1) * sd(MeanValue) / sqrt(length(MeanValue)),
+            UpperCI = MeanValue2 + qt(0.975, length(MeanValue) - 1) * sd(MeanValue) / sqrt(length(MeanValue)),
+            .groups = 'drop')
+
+
+# Plot the data
+# with error bars
+(rq1_graph_prettier <- ggplot(df_means, aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), width = 0.1) +  # Adding error bars
+  facet_wrap(~ Category, scales = "free_y") +
+  labs(title = "Comparison of Groups by Competences and Time Points",
+       x = "Time Point",
+       y = "Mean Value",
+       color = "Group") +
+  theme_minimal() +
+  theme(legend.position = "bottom"))
+
+ggsave(rq1_graph_prettier, file = "outputs/rq1_graph_prettier.png", width = 7, height = 5)
+
+# RQ2 Groups and TPB/ SW at MZP3 ----
+# make graph with two lines, one for each group plotting on TPB, SW
+# Plot with separate lines for each group
+(rq2_groups_tpb_sw <- ggplot(mzp3_cleaner, aes(x = TPB_mean, y = SW_mean, color = Group)) +
+  geom_point(alpha = 0.5, size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +  # Separate lines for each group
+  ylim(0, 3) + 
+  theme_clean() +
+  annotate("text", size = 2, x = 1, y = 2.5, label = paste("Spearman's rho:", round(spearman_cor, 2), "\n p-value:", round(spearman_pval, 3))) +
+  labs(x = "\nMean Sustainability competences", y = "Mean Self-efficacy beliefs\n") +
+  theme(legend.position = "bottom"))
+# how to interpret?!
+
+#### RQ? mzp3 comparing SW/TPB for groups----
+df_tp3 <- combined_df %>%
+  filter(Time_Point == "t3" & Category %in% c("SW_Mean", "TPB_Mean"))
+
+# Calculate means for each Group and Competence
+df_means3 <- df_tp3 %>%
+  group_by(Group, Category) %>%
+  summarise(
+    MeanValue2 = mean(MeanValue),
+    SEM = sd(MeanValue) / sqrt(n()),  # Standard Error of the Mean
+    .groups = 'drop'
+  )
+
+# Create the plot
+(graph_tp3_compare_sw_tpb <- ggplot(df_means3, aes(x = Category, y = MeanValue2, fill = Group)) +
+    geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
+    geom_errorbar(aes(ymin = MeanValue2 - SEM, ymax = MeanValue2 + SEM), 
+                  position = position_dodge(0.7), width = 0.2) +
+    labs(title = "Comparison of Mean Values for Competences at TimePoint3",
+       x = "Competence",
+       y = "Mean Value",
+       fill = "Group") +
+  theme_clean() +
+  theme(legend.position = "bottom"))
+
+ggsave(graph_tp3_compare_sw_tpb, file = "outputs/graph_tp3_compare_sw_tpb.png", width = 7, height = 5)
+
+### prettier version with point plot?
+# Create the point plot with error bars
+(graph_tp3_compare_sw_tpb_prettier <- ggplot(df_means3, aes(x = Category, y = MeanValue2, color = Group, group = Group)) +
+  geom_point(position = position_dodge(0.5), size = 3) +
+  geom_errorbar(aes(ymin = MeanValue2 - SEM, ymax = MeanValue2 + SEM), 
+                position = position_dodge(0.5), width = 0.2) +
+  labs(title = "Comparison of Mean Values for Competences at TimePoint3",
+       x = "Competence",
+       y = "Mean Value",
+       color = "Group") +
+  theme_clean() +
+  theme(legend.position = "bottom"))
+
+ggsave(graph_tp3_compare_sw_tpb_prettier, file = "outputs/graph_tp3_compare_sw_tpb_prettier.png", width = 7, height = 5)
+
+##### RQ3 SW and TPB ----
 # Scatter plot to visualize the relationship
 plot(mzp3_clean$TPB_mean, mzp3_clean$SW_mean, main = "Scatter plot of TPB_mean vs SW_mean", xlab = "TPB", ylab = "SW")
 
@@ -246,6 +418,59 @@ print(kendall_test)
 
 ggsave(graph_cor_rq3, file = "outputs/graph_cor_rq3.png", width = 7, height = 5)
 
+
+#### correlation SW and CS ----
+mzp3_cleaner <- mzp3_clean %>%
+  filter(!is.na(CS_mean)) %>%
+  filter(Group != "group1") 
+
+
+plot(mzp3_cleaner$SW_mean, mzp3_cleaner$CS_mean,  main = "Scatter plot of SW_mean and CS_mean", xlab = "SW", ylab = "CS")
+
+# Shapiro-Wilk normality test
+shapiro.test(mzp3_cleaner$CS_mean) #not normally distributed p<0.05
+shapiro.test(mzp3_cleaner$SW_mean) #not normally distributed p<0.05
+
+# Pearson correlation (but not normally distributed data, so not useful?)
+correlation_SW_CS <- cor(mzp3_cleaner$SW_mean, mzp3_cleaner$CS_mean)
+print(correlation_SW_CS)
+# 0.8
+
+# Spearman correlation
+spearman_cor_sw_cs <- cor(mzp3_cleaner$SW_mean, mzp3_cleaner$CS_mean, method = "spearman")
+print(paste("Spearman correlation:", spearman_cor_sw_cs))
+# 0.67
+
+spearman_test_sw_cs <- cor.test(mzp3_cleaner$SW_mean, mzp3_cleaner$CS_mean, method = "spearman")
+print(spearman_test_sw_cs)
+# p value (<0.05) rejects 0 hypothesis of no correlation -> relevant
+# 0.67
+
+spearman_cor_sw_cs <- spearman_test_sw_cs$estimate
+spearman_pval_sw_cs <- spearman_test_sw_cs$p.value
+
+# Kendall correlation
+kendall_cor_sw_cs <- cor(mzp3_cleaner$SW_mean, mzp3_cleaner$CS_mean, method = "kendall")
+print(paste("Kendall correlation:", kendall_cor))
+# 0.66 -> strong
+
+# Perform Kendall's tau correlation test
+kendall_test_sw_cs <- cor.test(mzp3_cleaner$SW_mean, mzp3_cleaner$CS_mean, method = "kendall")
+print(kendall_test_sw_cs)
+# p value rejects 0 hypothesis of no correlation -> relevant
+# 0.57
+
+
+# Plot with annotation (SPEARMAN)
+(rq3_graph_cor_sw_cs <-ggplot(mzp3_cleaner, aes(x = SW_mean, y = CS_mean)) +
+    geom_point(alpha = 0.5, size = 2, color = "#7CFC00") +
+    geom_smooth(method = "lm", se = FALSE, color = "#A6761D") +
+    ylim(0, 3) + 
+    theme_clean() +
+    annotate("text", size = 2, x = 1, y = 2.5, label = paste("Spearman's rho:", round(spearman_cor_sw_cs, 2), "\n p-value:", round(spearman_pval_sw_cs, 3))) +
+    labs(x = "\nMean Individual Self-efficacy beliefs", y = "Mean Collective Self-efficacy beliefs\n"))
+
+ggsave(rq3_graph_cor_sw_cs, file = "outputs/rq3_graph_cor_sw_cs.png", width = 7, height = 5)
 
 
 # clean theme ----
