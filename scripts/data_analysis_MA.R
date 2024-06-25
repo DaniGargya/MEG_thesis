@@ -11,8 +11,8 @@
 # check for normality of data
 # check for reliability (internal consistency) through cronbachs alpha
 # statistical analysis data
-### Kruskal Wallis
-### 
+### RQ1: Kruskal Wallis adn wilcoxon test
+### RQ2: 
 
 # (making pretty graphs)
 
@@ -302,156 +302,7 @@ df_alpha <- data.frame(
 )
 
 # Statistical analyses ----
-#write_csv(x=combined_df, path="data/data_collection/combined_df.csv")
-# are the next two useful?
-#results_kw <- combined_df_g02 %>%
- # group_by(Category) %>%
-  #summarise(
-   # Kruskal_Wallis = list(kruskal.test(MeanValue ~ interaction(Group, Time_Point), data = .)))
-
-# Extract and print results for each category
-#results_kw <- results_kw %>%
- # mutate(
-  #  Statistic = map_dbl(Kruskal_Wallis, "statistic"),
-   # p_value = map_dbl(Kruskal_Wallis, "p.value")) %>%
-  #select(Category, Statistic, p_value)
-
-# RQ1 Groups and categories Kruskal Wallis test ----
-# Perform Kruskal-Wallis test for each competence and time point
-# only comparision by time_point? weg?
-rq1_kw_group_category <- combined_df_g02 %>%
-  group_by(Category, Time_Point) %>%
-  summarise(
-    kruskal_p = kruskal.test(MeanValue ~ Group)$p.value,
-    .groups = 'drop')
-
-# necessary? --> how to include p-values of kruskal test in results?
-# Merge the p-values back into the original dataframe for plotting
-#combined_df_g02 <- combined_df_g02 %>%
- # left_join(rq1_kw_group_category, by = c("Category", "Time_Point")) 
-
-#combined_df_g02 <- combined_df_g02 %>%
- # mutate(label = paste("p =", round(kruskal_p.x, 3)))
-
-  
-# Calculate the means for each Group, Competence, and TimePoint
-# adding error bars
-# excluding irrelevant groups
-# still needed but old?
-df_means <- combined_df_g02 %>%
-  filter(!Category %in% c("SW_Mean", "CS_Mean", "SW_CS_Mean")) %>% #exclude irrelevant categories for this analysis
-  group_by(Group, Category, Time_Point) %>%
-  summarise(MeanValue2 = mean(MeanValue), 
-            LowerCI = MeanValue2 - qt(0.975, length(MeanValue) - 1) * sd(MeanValue) / sqrt(length(MeanValue)),
-            UpperCI = MeanValue2 + qt(0.975, length(MeanValue) - 1) * sd(MeanValue) / sqrt(length(MeanValue)),
-            .groups = 'drop')
-
-
-# Plot the data
-# with error bars
-# old? no signigicance stars?
-(rq1_graph_prettier <- ggplot(df_means, aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
-  geom_line() +
-  geom_point() +
-  geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), width = 0.1) +  # Adding error bars
-  facet_wrap(~ Category, scales = "free_y") +
-  labs(title = "Comparison of Groups by Competences and Time Points",
-       x = "Time Point",
-       y = "Mean Value",
-       color = "Group") +
-  theme_minimal() +
-  theme(legend.position = "bottom"))
-  #geom_text(data = combined_df_g02, aes(x = 1, y = Inf, label = label), 
-   #           vjust = 1.5, hjust = 0, size = 3, inherit.aes = FALSE, color = "black"))
-
-ggsave(rq1_graph_prettier, file = "outputs/rq1_graph_prettier.png", width = 7, height = 5)
-
-### add kruskal-wallis test results into graph ----
-# also comparing within groups between timepoints
-
-# Perform Kruskal-Wallis Test for Group Comparisons
-rq1_kw_group_category <- combined_df_g02 %>%
-  filter(!Category %in% c("SW_Mean", "CS_Mean", "SW_CS_Mean")) %>% #exclude irrelevant categories for this analysis
-  group_by(Category, Time_Point) %>%
-  summarise(
-    kruskal_p_group = kruskal.test(MeanValue ~ Group)$p.value,
-    .groups = 'drop')
-
-
-# Perform Kruskal-Wallis Test for Time Point Comparisons
-rq1_kw_time_category <- combined_df_g02 %>%
-  filter(!Category %in% c("SW_Mean", "CS_Mean", "SW_CS_Mean")) %>% #exclude irrelevant categories for this analysis
-  group_by(Category, Group) %>%
-  summarise(
-    kruskal_p_time = kruskal.test(MeanValue ~ Time_Point)$p.value,
-    .groups = 'drop')
-
-#Merge the Results into combined_df_g02
-combined_df_g02 <- combined_df_g02 %>%
-  left_join(rq1_kw_group_category, by = c("Category", "Time_Point")) %>%
-  left_join(rq1_kw_time_category, by = c("Category", "Group"))
-
-# Function to create a combined label for display
-create_p_value_label <- function(group_p, time_p) {
-  paste0("Group p = ", round(group_p, 3), "\nTime Point p = ", round(time_p, 3))
-}
-
-
-# Create labels for each combination of Category, Group, and Time_Point
-combined_df_g02 <- combined_df_g02 %>%
-  mutate(p_value_label = create_p_value_label(kruskal_p_group, kruskal_p_time))
-
-
-# Create the p-value labels
-# needed?
-combined_df_g02 <- combined_df_g02 %>%
-  mutate(
-    p_value_label_group = ifelse(!is.na(kruskal_p_group), paste0("Group p = ", round(kruskal_p_group, 3)), NA),
-    p_value_label_time = ifelse(!is.na(kruskal_p_time), paste0("Time p = ", round(kruskal_p_time, 3)), NA)
-  )
-
-
-### trying with stars
-# Create a new column indicating significant points
-# Filter for significant p-values (e.g., p < 0.05)
-combined_df_g02 <- combined_df_g02 %>%
-  mutate(significance_label = ifelse((!is.na(kruskal_p_group) & kruskal_p_group < 0.05) | 
-                                       (!is.na(kruskal_p_time) & kruskal_p_time < 0.05), "*", ""))
-
-
-
-### for stars
-# Ensure that your original data includes MeanValue2 for plotting
-# how come there are sometimes 2 stars?
-df_means2 <- combined_df_g02 %>%
-  filter(!Category %in% c("SW_Mean", "CS_Mean", "SW_CS_Mean")) %>% #exclude irrelevant categories for this analysis
-  group_by(Category, Time_Point, Group) %>%
-  summarise(
-    MeanValue2 = mean(MeanValue, na.rm = TRUE), 
-    LowerCI = MeanValue2 - sd(MeanValue, na.rm = TRUE) / sqrt(n()), 
-    UpperCI = MeanValue2 + sd(MeanValue, na.rm = TRUE) / sqrt(n()),
-    significance_label = first(significance_label),
-    .groups = 'drop'
-  )
-
-# Plot with p-value annotations and stars
-(rq1_graph_prettier <- ggplot(df_means2, aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
-  geom_line() +
-  geom_point() +
-  geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), width = 0.1) +  # Adding error bars
-  facet_wrap(~ Category, scales = "free_y") +
-  labs(title = "Comparison of Groups by Competences and Time Points",
-       x = "Time Point",
-       y = "Mean Value",
-       color = "Group") +
-  theme_minimal() +
-  theme(legend.position = "bottom") +
-  geom_text(aes(label = significance_label), vjust = -0.5, size = 6, color = "red"))
-
-
-
-
-### RQ1 use both kruskal and wilcoxon test ----
+### RQ1 kruskal and wilcoxon test groups, timepoints and display in graph with stars ----
 # Kruskal-Wallis test for time points within each category and group
 kw_results <- combined_df_g02 %>%
   filter(!Category %in% c("SW_Mean", "CS_Mean", "SW_CS_Mean")) %>% #exclude irrelevant categories for this analysis
@@ -488,23 +339,22 @@ combined_df_g02 <- combined_df_g02 %>%
   left_join(wilcox_results, by = c("Category", "Time_Point"))
 
 
-# Summarize significance information for each mean data point
-# old?
-significance_summary <- combined_df_g02 %>%
+# Calculate the means for each Group, Competence, and TimePoint
+# adding error bars
+# excluding irrelevant groups
+df_means <- combined_df_g02 %>%
   filter(!Category %in% c("SW_Mean", "CS_Mean", "SW_CS_Mean")) %>% #exclude irrelevant categories for this analysis
-  group_by(Category, Time_Point, Group) %>%
-  summarise(
-    significance_group.y = ifelse(any(significance_group.y != ""), "*", ""),
-    significance_time.y = ifelse(any(significance_time.y != ""), "+", "")
-  )
-
-# Merge the summarized significance values into df_means
-df_means <- df_means %>%
-  left_join(significance_summary, by = c("Category", "Time_Point", "Group"))
+  group_by(Group, Category, Time_Point) %>%
+  summarise(MeanValue2 = mean(MeanValue), 
+            LowerCI = MeanValue2 - qt(0.975, length(MeanValue) - 1) * sd(MeanValue) / sqrt(length(MeanValue)),
+            UpperCI = MeanValue2 + qt(0.975, length(MeanValue) - 1) * sd(MeanValue) / sqrt(length(MeanValue)),
+            .groups = 'drop') %>%
+  left_join(kw_results, by = c("Category", "Group")) %>%
+  left_join(wilcox_results, by = c("Category", "Time_Point"))
 
 
 # Plot with significance symbols
-(rq1_graph_prettier <- ggplot(df_means, aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
+(rq1_graph_prettier_stars <- ggplot(df_means, aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
   geom_line() +
   geom_point() +
   geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), width = 0.1) +  # Adding error bars
@@ -515,12 +365,15 @@ df_means <- df_means %>%
        color = "Group") +
   theme_minimal() +
   theme(legend.position = "bottom") +
-  geom_text_repel(data = df_means %>% filter(significance_group.y.y != ""), 
-                    aes(x = Time_Point, y = MeanValue2, label = significance_group.y.y), 
+  geom_text_repel(data = df_means %>% filter(significance_group != ""), 
+                    aes(x = Time_Point, y = MeanValue2, label = significance_group), 
                     vjust = -0.5, color = "black", size = 5, inherit.aes = FALSE) +  # Adjust vjust here
-  geom_text_repel(data = df_means %>% filter(significance_time.y.y != ""), 
-                    aes(x = Time_Point, y = MeanValue2, label = significance_time.y.y), 
+  geom_text_repel(data = df_means %>% filter(significance_time != ""), 
+                    aes(x = Time_Point, y = MeanValue2, label = significance_time), 
                     vjust = -1.0, color = "blue", size = 3, inherit.aes = FALSE))  # Adjust vjust here
+
+
+ggsave(rq1_graph_prettier_stars, file = "outputs/rq1_graph_prettier_stars.png", width = 7, height = 5)
 
 # RQ2 Groups and TPB/ SW at MZP3 ----
 # make graph with two lines, one for each group plotting on TPB, SW
