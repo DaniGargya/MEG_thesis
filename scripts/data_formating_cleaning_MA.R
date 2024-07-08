@@ -16,7 +16,7 @@ library(readr) # to transform data from sav to csv
 # data cleaning
 ### exclude imcomplete data?
 ### exclude data with more than 25% missing (6 answers)
-### exclude data that took less than 4 minutes
+### exclude data that took less than 2 minutes
 # data transformation
 ### scaling according to Lisa (0-3, instead of 1-4)
 ### inverse scales to reflect meaning
@@ -122,8 +122,8 @@ count_nas <- function(row) {
 # Apply the function to each row and create a new column 'count_nas'
 ds$count_nas <- apply(ds, 1, count_nas)
 
-# Filter the data frame to exclude rows with more than ??? NAs?
-ds_filtered <- ds[ds$count_nas <= 20, ]
+# Filter the data frame to exclude rows with NAs
+ds_filtered <- ds[ds$count_nas <= 1, ]
 
 
 # ??exclude data with more than 25% missing (8 answers) ----
@@ -137,7 +137,8 @@ ds_filtered$count_minus_ones <- apply(ds_filtered, 1, count_minus_ones)
 
 # Filter the data frame to exclude rows with more than eight -1s
 ds_filtered <- ds_filtered[ds_filtered$count_minus_ones <= 8, ]
-# ?? exclude data with less than 4 minutes  (240 sec) or 150sec! processing time ----
+
+# exclude data with less than  2.5 min/ 150sec! processing time (instead of 4)----
 #ds_filtered <- ds_filtered[ds_filtered$TIME_SUM >= 240, ]
 ds_filtered <- ds_filtered[ds_filtered$TIME_SUM >= 150, ]
 
@@ -153,31 +154,13 @@ convert_values <- function(x) {
                                           x)))))
   return(x)
 }
-#### leave all other numbers the same!!!!!!
 
-convert_values2 <- function(x) {
-  x <- ifelse(x == 4, 3,
-              ifelse(x == 3, 2,
-                     ifelse(x == 2, 1,
-                            ifelse(x == 1, 0,
-                                   ifelse(x == -1, -100, x)))))
-  return(x)
-}
 
 # Apply the function to all columns of the data frame
 ds_scaled <- lapply(ds_filtered, convert_values)
 ds_scaled <- as.data.frame(ds_scaled)
 
 # invert certain scales to reflect meaning (AT2, B3, B4, B8, B9, SW3, SW5) ----
-# Define a function to inverse scales and add new columns
-inverse_scale_and_add_columns <- function(df, columns) {
-  for (col in columns) {
-    new_col_name <- paste(col, "inverse", sep = "_")
-    df[[new_col_name]] <- inverse_scale(df[[col]])
-  }
-  return(df)
-}
-
 # Define a function to inverse scales
 inverse_scale <- function(x) {
   x <- ifelse(x == 3, 0,
@@ -187,17 +170,19 @@ inverse_scale <- function(x) {
   return(x)
 }
 
+# Define a function to inverse scales and add new columns
+inverse_scale_and_add_columns <- function(df, columns) {
+  for (col in columns) {
+    new_col_name <- paste(col, "inverse", sep = "_")
+    df[[new_col_name]] <- inverse_scale(df[[col]])
+  }
+  return(df)
+}
+
+
+
 # Apply the function to add extra columns with inverse scales
 ds_scaled_in <- inverse_scale_and_add_columns(ds_scaled, c("AT01_02", "B001_03", "B001_04", "B001_08", "B001_09", "SW01_03", "SW01_05"))
 
-# save formated dataset as csv ----
+# save formated dataset as csv (angell_mzp3) ----
 write_csv(x=ds_scaled_in, path="data/data_collection/angell_mzp3.csv")
-
-
-# checking ----
-# for time 150-240 sec
-#filtered_df <- subset(ds_filtered, TIME_SUM >= 150 & TIME_SUM <= 240)
-
-# for groups
-#value_counts2 <- ds_scaled_in %>%
-  count(Group)
