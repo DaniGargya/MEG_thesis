@@ -22,6 +22,7 @@ library(readr) # to transform data from sav to csv
 ### inverse scales to reflect meaning
 
 
+
 # data conversion Lisas data from sav to csv ----
 ### import and convert lisas data from sav to csv
 #pre angell
@@ -108,7 +109,7 @@ value_counts <- ds %>%
   count(Group)  # Count occurrences of each value in col1
 
 
-# ??exclude incomplete data ----
+# exclude incomplete data ----
 # Remove unnecessary columns with NA
 ds$SERIAL <- NULL
 ds$REF <- NULL
@@ -126,7 +127,7 @@ ds$count_nas <- apply(ds, 1, count_nas)
 ds_filtered <- ds[ds$count_nas <= 1, ]
 
 
-# ??exclude data with more than 25% missing (8 answers) ----
+# exclude data with more than 25% missing (8 answers) ----
 ###### more than 8 times I don't know or does it change because more questions??!
 # Function to count the number of -1s in a row
 count_minus_ones <- function(row) {

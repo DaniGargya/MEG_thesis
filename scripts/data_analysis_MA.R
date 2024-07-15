@@ -37,6 +37,7 @@ mzp2_clean <- read.csv("data/data_collection/data_pauli/angell_post.csv")
 mzp3_clean <- read.csv("data/data_collection/angell_mzp3.csv")
 
 
+
 # calculate means mzp3 ----
 # Define a function to calculate the mean, excluding -100 and NAs
 mean_exclude_negative_100 <- function(row) {
@@ -258,7 +259,7 @@ normality_test_t3 <- function(col) {
 normality_results_t3 <- map_dfr(mean_cols_t3, normality_test_t3)
 
 
-### calculating internal validity with cronbach alpha MZP3 ----
+# calculating internal validity with cronbach alpha MZP3 ----
 # stichprobengröße, siehe sample size calculator
 
 
@@ -302,6 +303,7 @@ df_alpha <- data.frame(
   Scale = names(alpha_results),
   Alpha = unlist(alpha_results)
 )
+
 
 # Statistical analyses ----
 ### RQ1 kruskal and wilcoxon test groups, timepoints and display in graph with stars ----
@@ -462,67 +464,9 @@ df_means$Category <- factor(df_means$Category, levels = c("TPB_Mean", "AT_Mean",
                   vjust = -1.0, color = "blue", size = 3, inherit.aes = FALSE))
 
 ggsave(rq1_graph_prettiest, file = "outputs/rq1_graph_prettiest.png", width = 7, height = 5)
-  
-### RQ1: Spearman and Eta-Quadrat ----
-# Convert Group to numeric
-combined_df_g02 <- combined_df_g02 %>%
-  mutate(Group_numeric = as.numeric(as.factor(Group)))
-
-# Calculate Spearman's rho for each time point and category
-spearman_rho_results <- combined_df_g02 %>%
-  filter(!Category %in% c("SW_Mean", "CS_Mean", "SW_CS_Mean")) %>% #exclude irrelevant categories for this analysis
-  group_by(Category, Time_Point) %>%
-  summarise(
-    spearman_rho = cor(MeanValue, Group_numeric, method = "spearman"),
-    p_value_rho = cor.test(MeanValue, Group_numeric, method = "spearman")$p.value,
-    .groups = 'drop'
-  )
-
-# Add significance stars based on p-values for Spearman's rho
-spearman_rho_results <- spearman_rho_results %>%
-  mutate(rho_significance = case_when(
-    p_value_rho < 0.001 ~ "***",
-    p_value_rho < 0.01 ~ "**",
-    p_value_rho < 0.05 ~ "*",
-    TRUE ~ ""
-  ))
-
-# Merge the Spearman rho results back into df_means
-#df_means <- df_means %>%
- # left_join(spearman_rho_results, by = c("Category", "Time_Point"))
-
-# Cohen
-# not working yet!!
-
-# Function to compute Cohen's d
-compute_cohens_d <- function(data) {
-  # Extract means and standard deviations for each group
-  group_means <- tapply(data$MeanValue, data$Group, mean)
-  group_sds <- tapply(data$MeanValue, data$Group, sd)
-  
-  # Cohen's d calculation
-  diff_means <- group_means[2] - group_means[1]  # Assuming Group 2 minus Group 1
-  pooled_sd <- sqrt(((length(data[data$Group == "group0", "MeanValue"]) - 1) * group_sds[1]^2 + (length(data[data$Group == "group2", "MeanValue"]) - 1) * group_sds[2]^2) / (length(data$MeanValue) - 2))
-  cohen_d <- diff_means / pooled_sd
-  
-  return(cohen_d)
-}
-
-# Compute Cohen's d for each Category and Time_Point
-cohen_d_results <- combined_df_g02 %>%
-  group_by(Category, Time_Point) %>%
-  summarise(
-    cohen_d = compute_cohens_d(.),  # Use "." to refer to the entire data within each group
-    .groups = 'drop'
-  )
 
 
-
-
-
-
-# RQ2a MZP3 comparing SW and TPB ----
-# relationship SW and TPB with spearman correlation ----
+### RQ2a relationship SW and TPB with spearman correlation at MZP3 ----
 # checking data
 # Scatter plot to visualize the relationship
 plot(mzp3_cleaner$TPB_mean, mzp3_cleaner$SW_mean, main = "Scatter plot of TPB_mean vs SW_mean", xlab = "TPB", ylab = "SW")
@@ -530,11 +474,8 @@ plot(mzp3_cleaner$TPB_mean, mzp3_cleaner$SW_mean, main = "Scatter plot of TPB_me
 # Shapiro-Wilk normality test
 shapiro.test(mzp3_cleaner$TPB_mean) #normally distributed p>0.05
 shapiro.test(mzp3_cleaner$SW_mean) #not normally distributed p<0.05
+shapiro.test(mzp3_cleaner_cs$CS_mean) #not normally distributed p<0.05
 
-# Pearson correlation (but not normally distributed data, so not useful?)
-# delete?
-correlation_SW <- cor(mzp3_cleaner$TPB_mean, mzp3_cleaner$SW_mean)
-print(correlation_SW) #0.82
 
 # Spearman correlation
 spearman_test <- cor.test(mzp3_cleaner$TPB_mean, mzp3_cleaner$SW_mean, method = "spearman")
@@ -543,13 +484,6 @@ spearman_cor <- spearman_test$estimate
 spearman_pval <- spearman_test$p.value
 # p value rejects 0 hypothesis of no correlation -> relevant
 # spearman_correlation 0.794 -> strong relationship
-
-# Kendall correlation
-kendall_test <- cor.test(mzp3_cleaner$TPB_mean, mzp3_cleaner$SW_mean, method = "kendall")
-print(kendall_test)
-# p value rejects 0 hypothesis of no correlation -> relevant
-# 0.667 -> strong?
-
 
 # Plot with annotation (SPEARMAN)
 (rq2a_graph_cor_tpb_sw <-ggplot(mzp3_cleaner, aes(x = TPB_mean, y = SW_mean)) +
@@ -563,252 +497,9 @@ print(kendall_test)
 ggsave(rq2a_graph_cor_tpb_sw, file = "outputs/rq2a_graph_cor_tpb_sw.png", width = 7, height = 5)
 
 
-# make graph with two lines, one for each group plotting on TPB, SW ----
-# how to interpret?! does it even make sense?
-# leave out?
-#(rq2_groups_tpb_sw <- ggplot(mzp3_cleaner, aes(x = TPB_mean, y = SW_mean, color = Group)) +
- #   geom_point(alpha = 0.5, size = 2) +
-  #  geom_smooth(method = "lm", se = FALSE) +  # Separate lines for each group
-   # ylim(0, 3) + 
-    #theme_clean() +
-    #annotate("text", size = 2, x = 1, y = 2.5, label = paste("Spearman's rho:", round(spearman_cor, 2), "\n p-value:", round(spearman_pval, 3))) +
-    #labs(x = "\nMean Sustainability competences", y = "Mean Self-efficacy beliefs\n") +
-    #theme(legend.position = "bottom"))
 
-
-# comparing SW/TPB for groups at MZP3 ----
-df_tp3 <- combined_df_g02 %>%
-  filter(Time_Point == "t3" & Category %in% c("SW_Mean", "TPB_Mean", "CS_Mean"))
-
-
-### checking wilcoxon for differences in SW between groups
-wilcox_results_sw <- df_tp3 %>%
-  group_by(Category, Time_Point) %>%
-  summarise(wilcox_p_group = wilcox.test(MeanValue ~ Group)$p.value,
-    .groups = 'drop') %>%
-  mutate(significance_group = case_when(
-      wilcox_p_group < 0.001 ~ "***",
-      wilcox_p_group < 0.01 ~ "**",
-      wilcox_p_group < 0.05 ~ "*",
-      TRUE ~ ""))
-
-### effect size measure ----
-# not working yet!!
-# Function to calculate rank-biserial correlation
-rank_biserial <- function(U, n1, n2) {
-  R <- U - (n1 * (n1 + 1) / 2)
-  r <- (2 * R / (n1 * n2)) - 1
-  return(r)
-}
-
-# Function to calculate common language effect size (CL)
-common_language_effect_size <- function(U, n1, n2) {
-  cl <- U / (n1 * n2)
-  return(cl)
-}
-
-# Calculate effect size measures
-wilcox_results_sw <- wilcox_results_sw %>%
-  mutate(
-    n1 = 42,  # Example: Number of observations in Group 1 (adjust as per your data)
-    n2 = 7,  # Example: Number of observations in Group 2 (adjust as per your data)
-    rank_biserial = rank_biserial(U = qwilcox(wilcox_p_group, n1, n2), n1, n2),
-    cl_effect_size = common_language_effect_size(U = qwilcox(wilcox_p_group, n1, n2), n1, n2))
-
-
-# Calculate effect size measures
-wilcox_results_sw <- wilcox_results_sw %>%
-  mutate(
-    U = qwilcox(wilcox_p_group, n1, n2),  # Replace with the correct method to get U
-    rank_biserial = rank_biserial(U, n1, n2),
-    cl_effect_size = common_language_effect_size(U, n1, n2)
-  )
-
-
-# Calculate means for each Group and Competence ----
-df_means3 <- df_tp3 %>%
-  filter(Category != "CS_Mean") %>%  #leave out CS or not?
-  filter(!is.na(MeanValue)) %>%
-  group_by(Group, Category) %>%
-  summarise(
-    MeanValue2 = mean(MeanValue),
-    LowerCI = MeanValue2 - qt(0.975, length(MeanValue) - 1) * sd(MeanValue) / sqrt(length(MeanValue)),
-    UpperCI = MeanValue2 + qt(0.975, length(MeanValue) - 1) * sd(MeanValue) / sqrt(length(MeanValue)),
-    .groups = 'drop') %>%
-  left_join(wilcox_results_sw, by = c("Category"))
-
-
-
-# Create the plot
-# leave out? not so pretty?
-(rq2b_boxgraph_tp3_sw_tpb <- ggplot(df_means3, aes(x = Category, y = MeanValue2, fill = Group)) +
-    geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
-    geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), 
-                  position = position_dodge(0.7), width = 0.2) +
-    labs(title = "Comparison of Mean Values for Competences at TimePoint3",
-         x = "Competence",
-         y = "Mean Value",
-         fill = "Group") +
-    theme_clean() +
-    theme(legend.position = "bottom"))
-
-ggsave(rq2b_boxgraph_tp3_sw_tpb, file = "outputs/rq2b_boxgraph_tp3_sw_tpb.png", width = 7, height = 5)
-
-### prettier version with point plot
-# Create the point plot with error bars
-(rq2b_pointgraph_tp3_sw_tpb <- ggplot(df_means3, aes(x = Category, y = MeanValue2, color = Group, group = Group)) +
-    geom_point(position = position_dodge(0.5), size = 3) +
-    geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), 
-                  position = position_dodge(0.5), width = 0.2) +
-    labs(title = "Comparison of Mean Values for Competences at TimePoint3",
-         x = "Competence",
-         y = "Mean Value",
-         color = "Group") +
-    theme_clean() +
-    theme(legend.position = "bottom"))
-
-ggsave(rq2b_pointgraph_tp3_sw_tpb, file = "outputs/rq2b_pointgraph_tp3_sw_tpb.png", width = 7, height = 5)
-
-
-#### including CS
-# Create the point plot with error bars
-# unnecessary??
-(rq2b_pointgraph_tp3_sw_tpb_cs <- ggplot(df_means3, aes(x = Category, y = MeanValue2, color = Group, group = Group)) +
-    geom_point(position = position_dodge(0.5), size = 3) +
-    geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), 
-                  position = position_dodge(0.5), width = 0.2) +
-    labs(title = "Comparison of Mean Values for Competences at TimePoint3",
-         x = "Competence",
-         y = "Mean Value",
-         color = "Group") +
-    theme_clean() +
-    theme(legend.position = "bottom"))
-
-ggsave(rq2b_pointgraph_tp3_sw_tpb_cs, file = "outputs/rq2b_pointgraph_tp3_sw_tpb_cs.png", width = 7, height = 5)
-
-
-### making facet wrap with 3 categories and significance values ----
-# Plot with significance symbols
-# leave out? ugly
-(rq2_graph_sw_tpb_cs_stars <- ggplot(df_means3, aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
-   geom_line() +
-   geom_point() +
-   geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), width = 0.1) +  # Adding error bars
-   facet_wrap(~ Category, scales = "free_y") +
-   labs(title = "Comparison of Groups by Competences",
-        x = "Time Point",
-        y = "Mean Value",
-        color = "Group") +
-   theme_minimal() +
-   theme(legend.position = "bottom") +
-   geom_text_repel(data = df_means3 %>% filter(significance_group != ""), 
-                   aes(x = Time_Point, y = MeanValue2, label = significance_group), 
-                   vjust = -0.5, color = "black", size = 5, inherit.aes = FALSE)) # Adjust vjust here
-   
-### use violin plot instead
-# Create the violin plot using raw data
-# Summarize significance information per category
-significance_summary_sw <- df_means3 %>%
-  #filter(Category != "CS_Mean") %>%  #leave out CS or not?
-  group_by(Category) %>%
-  summarise(
-    significance_group = paste(unique(significance_group[significance_group != ""]), collapse = " "),
-    .groups = 'drop'
-  )
-
-#only when wanting to exclude CS
-#df_tp3_sw <- df_tp3 %>%
- # filter(Category != "CS_Mean")
-
-
-(rq2b_violingraph_sw_tpb_cs_stars <- ggplot(df_tp3, aes(x = Group, y = MeanValue, color = Group)) +
-    geom_violin(trim = FALSE, alpha = 0.5) +  # Slight transparency to see boxplot
-    geom_boxplot(width = 0.1, position = position_dodge(0.9)) +  # Adding boxplot for median and IQR
-    geom_jitter(width = 0.2, size = 1, alpha = 0.3) +  # Adding individual data points
-  facet_wrap(~ Category, scales = "fixed") +
-  labs(title = "Comparison of Groups by Competences at TP3",
-       x = "Group",
-       y = "Mean Value",
-       color = "Group") +
-  theme_minimal() +
-  theme(legend.position = "bottom") +
-  geom_text(data = significance_summary_sw, 
-              aes(x = 1.45, y = 3, label = significance_group),  # Adjust position as needed
-              vjust = 1.5, color = "black", size = 5, inherit.aes = FALSE)) # Adjust vjust here
-
-ggsave(rq2b_violingraph_sw_tpb_stars, file = "outputs/rq2b_violingraph_sw_tpb_stars.png", width = 7, height = 5)
-
-ggsave(rq2b_violingraph_sw_tpb_cs_stars, file = "outputs/rq2b_violingraph_sw_tpb_cs_stars.png", width = 7, height = 5)
-
-
-
-#### correlation SW and CS ----
-mzp3_cleaner_cs <- mzp3_cleaner %>%
-  filter(!is.na(CS_mean))
-
-
-plot(mzp3_cleaner_cs$SW_mean, mzp3_cleaner_cs$CS_mean,  main = "Scatter plot of SW_mean and CS_mean", xlab = "SW", ylab = "CS")
-
-# Shapiro-Wilk normality test
-shapiro.test(mzp3_cleaner_cs$CS_mean) #not normally distributed p<0.05
-shapiro.test(mzp3_cleaner_cs$SW_mean) #not normally distributed p<0.05
-
-# Pearson correlation (but not normally distributed data, so not useful?)
-# leave out?
-correlation_SW_CS <- cor(mzp3_cleaner_cs$SW_mean, mzp3_cleaner_cs$CS_mean)
-print(correlation_SW_CS)
-# 0.797
-
-# Spearman correlation
-spearman_test_sw_cs <- cor.test(mzp3_cleaner_cs$SW_mean, mzp3_cleaner_cs$CS_mean, method = "spearman")
-print(spearman_test_sw_cs)
-# p value (<0.05) rejects 0 hypothesis of no correlation -> relevant
-# 0.653
-
-spearman_cor_sw_cs <- spearman_test_sw_cs$estimate
-spearman_pval_sw_cs <- spearman_test_sw_cs$p.value
-
-# Kendall correlation
-kendall_test_sw_cs <- cor.test(mzp3_cleaner_cs$SW_mean, mzp3_cleaner_cs$CS_mean, method = "kendall")
-print(kendall_test_sw_cs)
-# p value rejects 0 hypothesis of no correlation -> relevant
-# 0.549
-
-
-# Plot with annotation (SPEARMAN)
-(rq2b_graph_cor_sw_cs <-ggplot(mzp3_cleaner_cs, aes(x = SW_mean, y = CS_mean)) +
-    geom_point(alpha = 0.5, size = 2, color = "#7CFC00") +
-    geom_smooth(method = "lm", se = FALSE, color = "#A6761D") +
-    ylim(0, 3) + 
-    theme_clean() +
-    annotate("text", size = 2, x = 1, y = 2.5, label = paste("Spearman's rho:", round(spearman_cor_sw_cs, 2), "\n p-value:", round(spearman_pval_sw_cs, 3))) +
-    labs(x = "\nMean Individual Self-efficacy beliefs", y = "Mean Collective Self-efficacy beliefs\n"))
-
-ggsave(rq2b_graph_cor_sw_cs, file = "outputs/rq2b_graph_cor_sw_cs.png", width = 7, height = 5)
-
-
-
-
-#### RQ2: checking components of Self-efficacy comparing sw and cs----
-# Read the Excel file
-codebook_sw_cs <- read_excel("data/data_collection/codebook_sw_cs.xlsx")
-
-# Specify the questions of interest explicitly
-questions_sw <- c("CS01_01", "CS01_02", "CS01_03", "SW01_01", "SW01_02", "SW01_03_inverse", "SW01_04", "SW01_05_inverse", "SW01_06", "SW01_07", "SW01_08")
-
-# Calculate the mean scores for the specified questions
-mean_scores_sw <- colMeans(mzp3_cleaner[, questions_sw], na.rm = TRUE)
-
-# Convert the mean scores to a data frame for plotting
-mean_scores_sw_df <- data.frame(
-  Question = names(mean_scores_sw),
-  Mean_Score = mean_scores_sw
-)
-
-# Join the dataframes by the column 'Question'
-merged_sw_cs <- left_join(mean_scores_sw_df, codebook_sw_cs, by = "Question")
-
-
+### RQ2b: self-efficacy and groups ----
+### comparing between groups SW/CS ----
 # check distribution of data
 # Plot histograms
 for (question in questions_sw) {
@@ -832,35 +523,171 @@ shapiro_results_sw_cs <- data.frame(
 )
 ## none is normally distributed
 
+# filter out relevant categories
+df_tp3 <- combined_df_g02 %>%
+  filter(Time_Point == "t3" & Category %in% c("SW_Mean", "CS_Mean"))
 
-# compare questions SW and CS right next to each other----
-# Filter and arrange the data to compare the specified pairs
-comparison_df <- merged_sw_cs %>%
-  filter(Question %in% Question) %>%
-  mutate(Pair = case_when(
-    Question == "CS01_01" | Question == "SW01_01" ~ "CS01_01 and SW01_01",
-    Question == "CS01_02" | Question == "SW01_06" ~ "CS01_02 and SW01_06",
-    Question == "CS01_03" | Question == "SW01_04" ~ "CS01_03 and SW01_04"
+
+### checking wilcoxon for differences in SW/ CS between groups
+wilcox_results_sw_cs <- df_tp3 %>%
+  group_by(Category) %>%
+  summarise(wilcox_p_group = wilcox.test(MeanValue ~ Group)$p.value,
+    .groups = 'drop') %>%
+  mutate(significance_group = case_when(
+      wilcox_p_group < 0.001 ~ "***",
+      wilcox_p_group < 0.01 ~ "**",
+      wilcox_p_group < 0.05 ~ "*",
+      TRUE ~ ""))
+# no significant differences between the groups
+
+
+# Calculate means for each Group and Competence
+df_means3 <- df_tp3 %>%
+  filter(!is.na(MeanValue)) %>%
+  group_by(Group, Category) %>%
+  summarise(
+    MeanValue2 = mean(MeanValue),
+    LowerCI = MeanValue2 - qt(0.975, length(MeanValue) - 1) * sd(MeanValue) / sqrt(length(MeanValue)),
+    UpperCI = MeanValue2 + qt(0.975, length(MeanValue) - 1) * sd(MeanValue) / sqrt(length(MeanValue)),
+    .groups = 'drop') %>%
+  left_join(wilcox_results_sw_cs, by = c("Category"))
+
+# Create the point plot with error bars
+# unnecessary?
+(rq2b_pointgraph_tp3_sw_cs <- ggplot(df_means3, aes(x = Category, y = MeanValue2, color = Group, group = Group)) +
+    geom_point(position = position_dodge(0.5), size = 3) +
+    geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), 
+                  position = position_dodge(0.5), width = 0.2) +
+    labs(title = "Comparison of Mean Values for Competences at TimePoint3",
+         x = "Competence",
+         y = "Mean Value",
+         color = "Group") +
+    theme_clean() +
+    theme(legend.position = "bottom"))
+
+ggsave(rq2b_pointgraph_tp3_sw_cs, file = "outputs/rq2b_pointgraph_tp3_sw_tpb.png", width = 7, height = 5)
+
+
+# Create the violin plot using raw data
+# unnecessary
+(rq2b_violingraph_sw_cs_stars <- ggplot(df_tp3, aes(x = Group, y = MeanValue, color = Group)) +
+    geom_violin(trim = FALSE, alpha = 0.5) +  # Slight transparency to see boxplot
+    geom_boxplot(width = 0.1, position = position_dodge(0.9)) +  # Adding boxplot for median and IQR
+    geom_jitter(width = 0.2, size = 1, alpha = 0.3) +  # Adding individual data points
+  facet_wrap(~ Category, scales = "fixed") +
+  labs(title = "Comparison of Groups by Competences at TP3",
+       x = "Group",
+       y = "Mean Value",
+       color = "Group") +
+  theme_minimal() +
+  theme(legend.position = "bottom")) 
+  #geom_text(data = significance_summary_sw, 
+   #           aes(x = 1.45, y = 3, label = significance_group),  # Adjust position as needed
+    #          vjust = 1.5, color = "black", size = 5, inherit.aes = FALSE)) # Adjust vjust here
+
+ggsave(rq2b_violingraph_sw_cs_stars, file = "outputs/rq2b_violingraph_sw_cs_stars.png", width = 7, height = 5)
+
+
+
+
+
+
+# comparing sw vs cs within groups ----
+# Aggregate scores for CS and SW questions within each group
+aggregate_scores <- mzp3_cleaner %>%
+  pivot_longer(cols = c(starts_with("CS"), starts_with("SW")), names_to = "Question", values_to = "Score") %>%
+  mutate(Type = ifelse(str_detect(Question, "CS"), "CS", "SW")) %>%
+  drop_na() %>%
+  group_by(Group, Type) %>% 
+  summarize(Aggregate_Score = mean(Score, na.rm = TRUE), .groups = 'drop')
+
+# Reshape data to wide format to ensure paired observations
+wide_data <- aggregate_scores %>%
+  pivot_wider(names_from = Type, values_from = Aggregate_Score)
+
+# Function to perform Wilcoxon signed-rank test for aggregated scores
+wilcoxon_test_aggregated <- function(data, group) {
+  filtered_data <- data %>% filter(Group == group)
+  
+  cs_scores <- filtered_data$CS
+  sw_scores <- filtered_data$SW
+  
+  test <- wilcox.test(cs_scores, sw_scores, paired = TRUE)
+  return(data.frame(
+    Group = group,
+    Statistic = test$statistic,
+    P_Value = test$p.value
   ))
+}
+
+# Perform Wilcoxon tests for overall comparison within each group
+results_group0_overall <- wilcoxon_test_aggregated(wide_data, "group0")
+results_group2_overall <- wilcoxon_test_aggregated(wide_data, "group2")
+
+# Combine results into a dataframe
+wilcoxon_results_overall <- rbind(results_group0_overall, results_group2_overall)
+
+# Add Significance column for stars
+wilcoxon_results_overall$Significance <- ifelse(wilcoxon_results_overall$P_Value < 0.05, "*", "")
 
 
-# test statistically their relationship using spearman ----
-# Calculate Spearman correlations for the specified pairs
-spearman_results_sw_cs <- data.frame(
-  Pair = c("CS01_01 and SW01_01", "CS01_02 and SW01_06", "CS01_03 and SW01_04"),
-  Correlation = c(
-    cor(mzp3_cleaner$CS01_01, mzp3_cleaner$SW01_01, method = "spearman", use = "complete.obs"),
-    cor(mzp3_cleaner$CS01_02, mzp3_cleaner$SW01_06, method = "spearman", use = "complete.obs"),
-    cor(mzp3_cleaner$CS01_03, mzp3_cleaner$SW01_04, method = "spearman", use = "complete.obs")
-  ),
-  P_Value = c(
-    cor.test(mzp3_cleaner$CS01_01, mzp3_cleaner$SW01_01, method = "spearman", exact = FALSE)$p.value,
-    cor.test(mzp3_cleaner$CS01_02, mzp3_cleaner$SW01_06, method = "spearman", exact = FALSE)$p.value,
-    cor.test(mzp3_cleaner$CS01_03, mzp3_cleaner$SW01_04, method = "spearman", exact = FALSE)$p.value
-  )
+# Prepare data for visualization
+# Function to calculate confidence intervals
+calculate_ci <- function(data, conf_level = 0.95) {
+  mean_val <- mean(data, na.rm = TRUE)
+  stderr <- sd(data, na.rm = TRUE) / sqrt(length(data))
+  error_margin <- qnorm((1 + conf_level) / 2) * stderr
+  lower_ci <- mean_val - error_margin
+  upper_ci <- mean_val + error_margin
+  return(data.frame(Mean = mean_val, Lower_CI = lower_ci, Upper_CI = upper_ci))
+}
+
+# Apply CI calculation to the mean scores
+mean_scores_with_ci <- mzp3_cleaner %>%
+  pivot_longer(cols = c(starts_with("CS"), starts_with("SW")), names_to = "Question", values_to = "Score") %>%
+  mutate(Type = ifelse(str_detect(Question, "CS"), "CS", "SW")) %>%
+  drop_na() %>%
+  group_by(Group, Type) %>%
+  summarize(Mean_Score = mean(Score, na.rm = TRUE),
+            Lower_CI = mean(Score, na.rm = TRUE) - qnorm(0.975) * (sd(Score, na.rm = TRUE) / sqrt(n())),
+            Upper_CI = mean(Score, na.rm = TRUE) + qnorm(0.975) * (sd(Score, na.rm = TRUE) / sqrt(n())), .groups = 'drop')
+
+# Plotting the results with annotation and error bars
+(rq2b_boxplot_sw_cs_overall <- ggplot(mean_scores_with_ci, aes(x = Type, y = Mean_Score, fill = Type)) +
+  geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
+  geom_errorbar(aes(ymin = Lower_CI, ymax = Upper_CI), width = 0.2, position = position_dodge(0.7)) +
+  facet_wrap(~ Group, scales = "fixed") +
+  labs(title = "Comparison of Mean Scores for CS and SW Questions by Group",
+       x = "Type",
+       y = "Mean Score") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)))
+
+
+ggsave(rq2b_boxplot_sw_cs_overall, file = "outputs/rq2b_boxplot_sw_cs_overall.png", width = 7, height = 5)
+
+
+# checking level of individual questions sw vs cs ----
+# Read the Excel file
+codebook_sw_cs <- read_excel("data/data_collection/codebook_sw_cs.xlsx")
+
+# Specify the questions of interest explicitly
+questions_sw <- c("CS01_01", "CS01_02", "CS01_03", "SW01_01", "SW01_02", "SW01_03_inverse", "SW01_04", "SW01_05_inverse", "SW01_06", "SW01_07", "SW01_08")
+
+# Calculate the mean scores for the specified questions
+mean_scores_sw <- colMeans(mzp3_cleaner[, questions_sw], na.rm = TRUE)
+
+# Convert the mean scores to a data frame for plotting
+mean_scores_sw_df <- data.frame(
+  Question = names(mean_scores_sw),
+  Mean_Score = mean_scores_sw
 )
 
-### plotting results spearman
+# Join the dataframes by the column 'Question'
+merged_sw_cs <- left_join(mean_scores_sw_df, codebook_sw_cs, by = "Question")
+
+
+# test Wilcoxon comparing questions pairs and within groups ----
 # Specify the pairs
 pairs <- list(
   c("CS01_01", "SW01_01"),
@@ -868,56 +695,9 @@ pairs <- list(
   c("CS01_03", "SW01_04")
 )
 
-
 pair_names <- c("CS01_01 & SW01_01", "CS01_02 & SW01_06", "CS01_03 & SW01_04")
 
-# Calculate mean scores and correlations for each pair
-results <- lapply(seq_along(pairs), function(i) {
-  pair <- pairs[[i]]
-  data <- na.omit(mzp3_cleaner[, pair])
-  means <- colMeans(data, na.rm = TRUE)
-  correlation_test <- cor.test(data[[1]], data[[2]], method = "spearman", exact = FALSE)
-  
-  data.frame(
-    Question = pair,
-    Mean = means,
-    Pair = rep(pair_names[i], 2),
-    Correlation = correlation_test$estimate,
-    P_Value = correlation_test$p.value,
-    Significance = ifelse(correlation_test$p.value < 0.05, "*", "")
-  )
-})
 
-# Combine results into a single dataframe
-plot_data <- do.call(rbind, results)
-plot_data$Pair <- rep(pair_names, each = 2)
-
-
-# Summarize for annotations
-annotations <- plot_data %>%
-  group_by(Pair) %>%
-  summarize(
-    Correlation = first(Correlation),
-    P_Value = first(P_Value),
-    Significance = first(Significance),
-    MaxMean = max(Mean) * 1.1
-  )
-
-# Plotting
-# not working yet
-(comparision_sw_cs_spearman <- ggplot(plot_data, aes(x = Question, y = Mean, fill = Question)) +
-    geom_col(position = position_dodge(width = 0.8), width = 0.7) +
-    facet_wrap(~ Pair, scales = "fixed") +
-    #geom_text(data = annotations, aes(x = 1, y = MaxMean, label = ifelse(Significance == "*", paste("★ ρ=", round(Correlation, 2), "p=", round(P_Value, 3)), paste("ρ=", round(Correlation, 2), "p=", round(P_Value, 3)))), vjust = 0) +
-    labs(title = "Comparison of Mean answers collective vs individual self-efficacy", x = "Question", y = "Mean Score") +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          strip.text.x = element_text(size = 14, face = "bold")))
-
-
-ggsave(comparision_sw_cs_spearman, file = "outputs/comparision_sw_cs_spearman.png", width = 7, height = 5)
-
-### test Wilcoxon comparing questions pairs and within groups ----
 # Filter data for each group
 group0_data <- mzp3_cleaner %>% filter(Group == "group0")
 group2_data <- mzp3_cleaner %>% filter(Group == "group2")
@@ -1002,7 +782,8 @@ mean_scores <- mean_scores %>%
 ggsave(rq2b_comparision_sw_cs_wilcox, file = "outputs/rq2b_comparision_sw_cs_wilcox.png", width = 7, height = 5)
 
 
-# Perform Wilcoxon signed-rank tests comparing groups between LinksAAA (using combination SW_CS) ----
+
+### comparing groups Links AAA  ----
 # add between groups and categories
 
 # Calculate the mean scores for each group and question
@@ -1049,7 +830,7 @@ wilcoxon_results_sw_cs$Statistic <- sapply(wilcoxon_results_sw_cs$W_test, functi
 # show in violin plot?
 
 
-#### theoretical classification with aim vs action focussed ----
+# comparing between groups aim vs action focussed ----
 # add new classification only based on aim vs action
 merged_group_scores <- merged_group_scores %>%
   mutate(Theoretical_classification2 = case_when(
@@ -1100,6 +881,81 @@ merged_group_scores <- merged_group_scores %>%
 
 
 ggsave(rq2b_boxplot_compare_groups_aims_actions, file = "outputs/rq2b_boxplot_compare_groups_aims_actions.png", width = 7, height = 5)
+
+### compare action vs aim within groups ----
+# Aggregate scores for aim and action questions within each group
+aggregate_scores <- merged_group_scores %>%
+  group_by(Group, Theoretical_classification2) %>% 
+  summarize(Aggregate_Score = mean(Mean_Score, na.rm = TRUE), .groups = 'drop')
+
+
+# Reshape data to wide format to ensure paired observations
+wide_data2 <- aggregate_scores %>%
+  pivot_wider(names_from = Theoretical_classification2, values_from = Aggregate_Score)
+
+
+# Function to perform Wilcoxon signed-rank test for aggregated scores
+wilcoxon_test_aggregated2 <- function(data, group) {
+  filtered_data <- data %>% filter(Group == !!group)
+  
+  aim_scores <- filtered_data$aim
+  action_scores <- filtered_data$action
+  
+  test <- wilcox.test(aim_scores, action_scores, paired = TRUE)
+  return(data.frame(
+    Group = group,
+    Statistic = test$statistic,
+    P_Value = test$p.value
+  ))
+}
+
+# Perform Wilcoxon tests for overall comparison within each group
+results_group0_aa <- wilcoxon_test_aggregated2(wide_data2, "group0")
+results_group2_aa <- wilcoxon_test_aggregated2(wide_data2, "group2")
+
+# Combine results into a dataframe
+wilcoxon_results_aim_action2 <- rbind(results_group0_aa, results_group2_aa)
+
+# Add Significance column for stars
+wilcoxon_results_aim_action2$Significance <- ifelse(wilcoxon_results_aim_action2$P_Value < 0.05, "*", "")
+
+# Function to calculate confidence intervals
+calculate_ci <- function(data, conf_level = 0.95) {
+  mean_val <- mean(data, na.rm = TRUE)
+  stderr <- sd(data, na.rm = TRUE) / sqrt(length(data))
+  error_margin <- qnorm((1 + conf_level) / 2) * stderr
+  lower_ci <- mean_val - error_margin
+  upper_ci <- mean_val + error_margin
+  return(data.frame(Mean = mean_val, Lower_CI = lower_ci, Upper_CI = upper_ci))
+}
+
+# Apply CI calculation to the mean scores
+mean_scores_with_ci <- merged_group_scores %>%
+  group_by(Group, Theoretical_classification2) %>%
+  summarize(
+    Mean_Score = mean(Mean_Score, na.rm = TRUE),
+    Lower_CI = mean(Mean_Score, na.rm = TRUE) - qnorm(0.975) * (sd(Mean_Score, na.rm = TRUE) / sqrt(n())),
+    Upper_CI = mean(Mean_Score, na.rm = TRUE) + qnorm(0.975) * (sd(Mean_Score, na.rm = TRUE) / sqrt(n())),
+    .groups = 'drop'
+  )
+
+
+# Plotting the results with annotation and error bars
+(rq2b_bars_compare_groups_aim_action <- ggplot(mean_scores_with_ci, aes(x = Theoretical_classification2, y = Mean_Score, fill = Theoretical_classification2)) +
+  geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
+  geom_errorbar(aes(ymin = Lower_CI, ymax = Upper_CI), width = 0.2, position = position_dodge(0.7)) +
+  facet_wrap(~ Group, scales = "fixed") +
+  #geom_text(data = wilcoxon_results_aim_action,
+   #         aes(x = 1.5, y = max(mean_scores_with_ci$Upper_CI) * 1.05, label = Significance), vjust = -0.5, size = 5) +
+  labs(title = "Comparison of Mean Scores for Aim and Action Questions by Group",
+       x = "Type",
+       y = "Mean Score") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)))
+
+ggsave(rq2b_bars_compare_groups_aim_action, file = "outputs/rq2b_bars_compare_groups_aim_action.png", width = 7, height = 5)
+
+
 
 
 # clean theme ----
