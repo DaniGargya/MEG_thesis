@@ -79,9 +79,9 @@ mzp3_clean$SW_CS_mean <- apply(mzp3_clean[, c("SW_mean", "CS_mean")], 1, mean_ex
 
 # harmonising and combining dfs ----
 # Add a time point indicator to each data frame
-mzp1_clean$TP <- "t1"
-mzp2_clean$TP <- "t2"
-mzp3_clean$TP <- "t3"
+mzp1_clean$TP <- "Measurement point 1"
+mzp2_clean$TP <- "Measurement point 2"
+mzp3_clean$TP <- "Measurement point 3"
 
 
 # MZP3
@@ -166,14 +166,14 @@ combined_df$Category <- as.factor(combined_df$Category)
 # overview of all datasets with treemap ----
 # Summarize the data: count number of answers per group per time point
 summary_data <- combined_df %>%
+  filter(Group != "group1") %>%
+  mutate(Group = recode(Group, "group0" = "control group", "group2" = "involved group")) %>%
   group_by(Group, Time_Point) %>%
   summarise(Count = n(), .groups = 'drop') %>%
-  mutate(Count = ifelse(Time_Point %in% c("t1", "t2"), Count / 6, Count / 9)) %>% # adjust with calculated means per mzp
-  mutate(Alpha = ifelse(Group == "group1", 0.1, 1))  #for displaying group1 that is excluded differently
-
+  mutate(Count = ifelse(Time_Point %in% c("Measurement point 1", "Measurement point 2"), Count / 6, Count / 9)) %>% # adjust with calculated means per mzp
+  mutate(Alpha = ifelse(Group == "group1", 0.1, 1)) 
 
 # Create the treemap
-##? add use of different pattern for gorup 1?
 (treemap_mzps_groups <- ggplot(summary_data, aes(area = Count, fill = as.factor(Group), label = Count,
                                          subgroup = as.factor(Time_Point), subgroup2 = as.factor(Group))) +
   geom_treemap(aes(alpha = Alpha)) +
@@ -186,6 +186,28 @@ summary_data <- combined_df %>%
   #scale_fill_treemap(values = c("group0" = "stripe", "group1" = "dot", "group2" = "solid")) +  # Use pattern fills
   labs(title = "Treemap of Answers per Group per Time Point", fill = "Group") +
   theme_clean()) # Adjust the limits to increase space between timepoints)
+
+# new
+(treemap_mzps_groups <- ggplot(summary_data, aes(area = Count, fill = as.factor(Group), label = Count,
+                                                subgroup = as.factor(Time_Point))) +
+  geom_treemap() +
+  geom_treemap_text(colour = "white", place = "centre") +
+  geom_treemap_subgroup_border(colour = "black", size = 2) +
+  geom_treemap_subgroup_text(place = "centre", grow = TRUE, colour = "black", fontface = "italic", size = 5) +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(title = "Treemap of Answers per Group per Time Point", fill = "Group") +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 12),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 10)
+  ) +
+  guides(fill = guide_legend(title.position = "top", title.hjust = 0.5)))
+
 
 ggsave(treemap_mzps_groups, filename = "outputs/treemap_mzps_groups.png",
        height = 5, width = 8)
