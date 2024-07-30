@@ -380,18 +380,13 @@ df_means <- combined_df_g02 %>%
 
 
 
-# Define a labeller function to rename facets
-facet_labeller <- labeller(Category = c(
-  TPB_Mean = "Cumulated Sus Competences",
-  AT_Mean = "Attitude",
-  B_Mean = "Behaviour",
-  INT_Mean = "Intention",
-  PBC_Mean = "Perceived behaviour control",
-  SN_Mean = "Subjective norms"))
+
+
 
 
 # Plot with significance symbols
-(rq1_graph_prettier_stars <- ggplot(df_means, aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
+# old?
+(rq1_graph_prettier_stars <- ggplot(df_means1, aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
   geom_line() +
   geom_point() +
   geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), width = 0.1) +  # Adding error bars
@@ -417,6 +412,7 @@ library(patchwork)
 # only one star
 # Summarize df_means to include only one significance annotation per time point with the correct number of stars
 df_means_grouped <- df_means %>%
+  mutate(Time_Point = recode(Time_Point, "t1" = "MP1", "t2" = "MP2", "t3" = "MP3")) %>%
   group_by(Category, Time_Point) %>%
   summarize(MeanValue2 = mean(MeanValue2, na.rm = TRUE),
             LowerCI = mean(LowerCI, na.rm = TRUE),
@@ -464,31 +460,105 @@ df_means_grouped <- df_means %>%
 ggsave(combined_plot, file = "outputs/rq1_combined_plot.png", width = 7, height = 9)
 
 # go back to one plot
+
+# Define a labeller function to rename facets
+facet_labeller <- labeller(Category = c(
+  AT_Mean = "Sustainability Attitudes\n(Attitude)",
+  INT_Mean = "Sustainability Attitudes\n(Intention)",
+  PBC_Mean = "Sustainability Attitudes\n(PBC)",
+  SN_Mean = "Sustainability Attitudes\n(Subjective norms)",
+  B_Mean = "Sustainability Behaviours\n(Behaviour)",
+  TPB_Mean = "Cumulative\nSA and SB"))
+
+df_means1 <- df_means %>%
+  mutate(Group = recode(Group, "group0" = "Control group", "group2" = "Involved group")) %>%
+  mutate(Time_Point = recode(Time_Point, "t1" = "MP1", "t2" = "MP2", "t3" = "MP3"))
+
+
+# Custom colors for the groups
+custom_colors <- c("#E7298A", "#1B9E77")
+
 # Add a new factor level to control the order and size of the facets
-df_means$Category <- factor(df_means$Category, levels = c("TPB_Mean", "AT_Mean", "B_Mean", "INT_Mean", "PBC_Mean", "SN_Mean"))
+df_means1$Category <- factor(df_means1$Category, levels = c("AT_Mean", "INT_Mean", "B_Mean", "PBC_Mean", "SN_Mean", "TPB_Mean"))
+
+# theme clean 2
+theme_clean2 <- function(){
+  theme_bw() +
+    theme(axis.text.x = element_text(size = 14),
+          axis.text.y = element_text(size = 14),
+          axis.title.x = element_text(size = 14, face = "plain"),             
+          axis.title.y = element_text(size = 14, face = "plain"),             
+          panel.grid.major.x = element_blank(),                                          
+          panel.grid.minor.x = element_blank(),
+          panel.grid.minor.y = element_blank(),
+          panel.grid.major.y = element_blank(),  
+          #plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), # Corrected the unit specification
+          plot.title = element_text(size = 15, vjust = 1, hjust = 0.5),
+          legend.text = element_text(size = 12, face = "italic"),          
+          legend.title = element_text(size = 12, face = "bold"),                              
+          legend.position = "bottom") # Changed legend.position to a descriptive keyword for consistency
+}
+
 
 # Create the plot
-(rq1_graph_prettiest <- ggplot(df_means, aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
+(rq1_graph_prettiest <- ggplot(df_means1, aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
   geom_line() +
   geom_point() +
   geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), width = 0.1) +  # Adding error bars
   facet_wrap(~ Category, scales = "fixed", labeller = facet_labeller, ncol = 3) +  # 3x2 grid layout
-  labs(x = "Time Point",
+  labs(x = "\nMeasurement Points",
        y = "Mean Value",
        color = "Group") +
+  #theme_clean2() +  
+  scale_color_manual(values = custom_colors) +  # Custom colors for the groups
   theme_minimal() +
-  theme(legend.position = "bottom") +
+  theme(panel.grid.major = element_blank(),   # Remove major grid lines
+          panel.grid.minor = element_blank(),   # Remove minor grid lines
+          legend.position = "bottom",
+        legend.text = element_text(size = 12, face = "italic"),          
+        legend.title = element_text(size = 12, face = "bold")) +
+    
+  #theme(legend.position = "bottom") +
   geom_text_repel(data = df_means_grouped %>% filter(significance_group != ""),
                   aes(x = Time_Point, y = MeanValue2, label = significance_group), 
-                  vjust = -0.5, color = "black", size = 5, inherit.aes = FALSE) +  # Adjust vjust here
+                  vjust = -1.5, color = "black", size = 6, inherit.aes = FALSE, segment.color = NA) +  # Adjust vjust here
   geom_text_repel(data = df_means_grouped %>% filter(significance_time != ""), 
                   aes(x = Time_Point, y = MeanValue2, label = significance_time), 
-                  vjust = -1.0, color = "blue", size = 3, inherit.aes = FALSE))
+                  vjust = -1.0, color = "blue", size = 3, inherit.aes = FALSE)+
+  guides(fill = guide_legend(title = NULL)))
 
-ggsave(rq1_graph_prettiest, file = "outputs/rq1_graph_prettiest.png", width = 7, height = 5)
+ggsave(rq1_graph_prettiest, file = "outputs/rq1_graph_prettiest2.png", width = 7, height = 5)
 
 
-### RQ2a relationship SW and TPB with spearman correlation at MZP3 ----
+# even perfect
+(rq1_graph_perfect <- ggplot(df_means1, aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), width = 0.1) +  # Adding error bars
+  facet_wrap(~ Category, scales = "fixed", labeller = facet_labeller, ncol = 3) +  # 3x2 grid layout
+  labs(x = "\nMeasurement Points", y = "\nMean Value") +
+  scale_color_manual(values = custom_colors) +  # Custom colors for the groups
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(),   # Remove major grid lines
+        panel.grid.minor = element_blank(),   # Remove minor grid lines
+        panel.border = element_rect(fill = NA, color = "black"), # Add border around each facet
+        legend.position = "bottom",
+        legend.text = element_text(size = 12, face = "italic"),          
+        legend.title = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 14, face = "plain"),             
+        axis.title.y = element_text(size = 14, face = "plain")) +
+  geom_text_repel(data = df_means_grouped %>% filter(significance_group != ""),
+                  aes(x = Time_Point, y = MeanValue2, label = significance_group), 
+                  vjust = -1.5, color = "black", size = 6, inherit.aes = FALSE, segment.color = NA) +  # Adjust vjust here
+  geom_text_repel(data = df_means_grouped %>% filter(significance_time != ""), 
+                  aes(x = Time_Point, y = MeanValue2, label = significance_time), 
+                  vjust = -1.0, color = "blue", size = 3, inherit.aes = FALSE) +
+  guides(color = guide_legend(title = NULL)))  # Remove the legend title
+
+ggsave(rq1_graph_perfect, file = "outputs/rq1_graph_perfect.png", width = 7, height = 5)
+
+
+### RQ2 relationship SW and TPB with spearman correlation at MZP3 ----
 # checking data
 # Scatter plot to visualize the relationship
 plot(mzp3_cleaner$TPB_mean, mzp3_cleaner$SW_mean, main = "Scatter plot of TPB_mean vs SW_mean", xlab = "TPB", ylab = "SW")
@@ -513,14 +583,14 @@ spearman_pval <- spearman_test$p.value
   geom_smooth(method = "lm", se = FALSE, color = "#A6761D") +
   ylim(0, 3) + 
   theme_clean() +
-  annotate("text", size = 2, x = 1, y = 2.5, label = paste("Spearman's rho:", round(spearman_cor, 2), "\n p-value:", round(spearman_pval, 3))) +
-  labs(x = "\nMean Theory Planned behaviour competencies", y = "Mean Individual Self-efficacy beliefs\n"))
+    annotate("text", size = 3, x = 1, y = 2.5, label = paste("Spearman's rho:", round(spearman_cor, 2), "\np-value < .001")) +
+  labs(x = "\nMean Sustainability Attitudes and Behaviours (TPB)", y = "Mean Efficacy beliefs\n"))
 
 ggsave(rq2a_graph_cor_tpb_sw, file = "outputs/rq2a_graph_cor_tpb_sw.png", width = 7, height = 5)
 
 
 
-### RQ2b: self-efficacy and groups ----
+### RQ3: self-efficacy and groups ----
 ### comparing between groups SW/CS ----
 # check distribution of data
 # Plot histograms
@@ -573,45 +643,6 @@ df_means3 <- df_tp3 %>%
     UpperCI = MeanValue2 + qt(0.975, length(MeanValue) - 1) * sd(MeanValue) / sqrt(length(MeanValue)),
     .groups = 'drop') %>%
   left_join(wilcox_results_sw_cs, by = c("Category"))
-
-# Create the point plot with error bars
-# unnecessary?
-(rq2b_pointgraph_tp3_sw_cs <- ggplot(df_means3, aes(x = Category, y = MeanValue2, color = Group, group = Group)) +
-    geom_point(position = position_dodge(0.5), size = 3) +
-    geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), 
-                  position = position_dodge(0.5), width = 0.2) +
-    labs(title = "Comparison of Mean Values for Competences at TimePoint3",
-         x = "Competence",
-         y = "Mean Value",
-         color = "Group") +
-    theme_clean() +
-    theme(legend.position = "bottom"))
-
-ggsave(rq2b_pointgraph_tp3_sw_cs, file = "outputs/rq2b_pointgraph_tp3_sw_tpb.png", width = 7, height = 5)
-
-
-# Create the violin plot using raw data
-# unnecessary
-(rq2b_violingraph_sw_cs_stars <- ggplot(df_tp3, aes(x = Group, y = MeanValue, color = Group)) +
-    geom_violin(trim = FALSE, alpha = 0.5) +  # Slight transparency to see boxplot
-    geom_boxplot(width = 0.1, position = position_dodge(0.9)) +  # Adding boxplot for median and IQR
-    geom_jitter(width = 0.2, size = 1, alpha = 0.3) +  # Adding individual data points
-  facet_wrap(~ Category, scales = "fixed") +
-  labs(title = "Comparison of Groups by Competences at TP3",
-       x = "Group",
-       y = "Mean Value",
-       color = "Group") +
-  theme_minimal() +
-  theme(legend.position = "bottom")) 
-  #geom_text(data = significance_summary_sw, 
-   #           aes(x = 1.45, y = 3, label = significance_group),  # Adjust position as needed
-    #          vjust = 1.5, color = "black", size = 5, inherit.aes = FALSE)) # Adjust vjust here
-
-ggsave(rq2b_violingraph_sw_cs_stars, file = "outputs/rq2b_violingraph_sw_cs_stars.png", width = 7, height = 5)
-
-
-
-
 
 
 # comparing sw vs cs within groups ----
@@ -674,16 +705,29 @@ mean_scores_with_ci <- mzp3_cleaner %>%
             Lower_CI = mean(Score, na.rm = TRUE) - qnorm(0.975) * (sd(Score, na.rm = TRUE) / sqrt(n())),
             Upper_CI = mean(Score, na.rm = TRUE) + qnorm(0.975) * (sd(Score, na.rm = TRUE) / sqrt(n())), .groups = 'drop')
 
+
+
+mean_scores_with_ci1 <- mean_scores_with_ci %>%
+  mutate(Group = recode(Group, "group0" = "Control group", "group2" = "Involved group")) %>%
+  mutate(Type = recode(Type, "CS" = "Collective efficacy beliefs", "SW" = "Personal efficacy beliefs")) #%>%
+  #rename(`Types of Efficacy` = Type)
+
+# Define custom colors2
+custom_colors2 <- c("#D95F02", "#E6AB02")
+
 # Plotting the results with annotation and error bars
-(rq2b_boxplot_sw_cs_overall <- ggplot(mean_scores_with_ci, aes(x = Type, y = Mean_Score, fill = Type)) +
+(rq2b_boxplot_sw_cs_overall <- ggplot(mean_scores_with_ci1, aes(x = Type, y = Mean_Score, fill = Type)) +
   geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
   geom_errorbar(aes(ymin = Lower_CI, ymax = Upper_CI), width = 0.2, position = position_dodge(0.7)) +
   facet_wrap(~ Group, scales = "fixed") +
-  labs(title = "Comparison of Mean Scores for CS and SW Questions by Group",
-       x = "Type",
-       y = "Mean Score") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)))
+  labs(y = "\n\nMean Value") +
+  theme_clean() +
+  scale_fill_manual(values = custom_colors2) + 
+  theme(axis.title.x = element_blank(),            # Remove x-axis title
+          axis.text.x = element_blank(),             # Remove x-axis text
+          axis.ticks.x = element_blank(),            # Remove x-axis ticks
+          legend.position = "bottom")+
+    guides(fill = guide_legend(title = NULL)))    # Remove the legend title)
 
 
 ggsave(rq2b_boxplot_sw_cs_overall, file = "outputs/rq2b_boxplot_sw_cs_overall.png", width = 7, height = 5)
@@ -811,9 +855,20 @@ ggsave(rq2b_comparision_sw_cs_wilcox, file = "outputs/rq2b_comparision_sw_cs_wil
 # Calculate the mean scores for each group and question
 group_mean_scores <- mzp3_cleaner %>%
   select(Group, all_of(questions_sw)) %>%
-  pivot_longer(cols = -Group, names_to = "Question", values_to = "Score") %>%
-  group_by(Group, Question) %>%
+  pivot_longer(cols = -Group, names_to = "Question", values_to = "Score") #%>%
+  group_by(Group, Question) #%>%
   summarize(Mean_Score = mean(Score, na.rm = TRUE), .groups = 'drop')
+
+# copied from above
+mean_scores_with_ci <- mzp3_cleaner %>%
+  pivot_longer(cols = c(starts_with("CS"), starts_with("SW")), names_to = "Question", values_to = "Score") %>%
+  mutate(Type = ifelse(str_detect(Question, "CS"), "CS", "SW")) #%>%
+  drop_na() %>%
+  group_by(Group, Type) %>%
+  summarize(Mean_Score = mean(Score, na.rm = TRUE),
+            Lower_CI = mean(Score, na.rm = TRUE) - qnorm(0.975) * (sd(Score, na.rm = TRUE) / sqrt(n())),
+            Upper_CI = mean(Score, na.rm = TRUE) + qnorm(0.975) * (sd(Score, na.rm = TRUE) / sqrt(n())), .groups = 'drop')
+
 
 # Join the group mean scores with the theoretical classifications
 merged_group_scores <- left_join(group_mean_scores, codebook_sw_cs, by = "Question")
@@ -862,6 +917,7 @@ merged_group_scores <- merged_group_scores %>%
 
 
 
+
 # If you want to view or compare within theoretical classifications:
 final_analysis2 <- merged_group_scores %>%
   group_by(Theoretical_classification2, Group) %>%
@@ -887,22 +943,6 @@ wilcoxon_results_aim_action$Significance <- ifelse(wilcoxon_results_aim_action$P
 merged_group_scores <- merged_group_scores %>%
   left_join(wilcoxon_results_aim_action %>% select(Theoretical_classification2, Significance), by = "Theoretical_classification2")
 
-
-
-# Assuming 'merged_group_scores' contains the appropriate data from previous steps
-(rq2b_boxplot_compare_groups_aims_actions <- ggplot(merged_group_scores, aes(x = Group, y = Mean_Score, fill = Group)) +
-    geom_boxplot() +
-    facet_wrap(~ Theoretical_classification2, scales = "fixed") +
-    labs(title = "Distribution of Mean Scores by Group and Classification",
-         x = "Group",
-         y = "Mean Score") +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)))
-
-# add star manually at aim??!
-
-
-ggsave(rq2b_boxplot_compare_groups_aims_actions, file = "outputs/rq2b_boxplot_compare_groups_aims_actions.png", width = 7, height = 5)
 
 ### compare action vs aim within groups ----
 # Aggregate scores for aim and action questions within each group
@@ -941,25 +981,28 @@ wilcoxon_results_aim_action2 <- rbind(results_group0_aa, results_group2_aa)
 # Add Significance column for stars
 wilcoxon_results_aim_action2$Significance <- ifelse(wilcoxon_results_aim_action2$P_Value < 0.05, "*", "")
 
-# Function to calculate confidence intervals
-calculate_ci <- function(data, conf_level = 0.95) {
-  mean_val <- mean(data, na.rm = TRUE)
-  stderr <- sd(data, na.rm = TRUE) / sqrt(length(data))
-  error_margin <- qnorm((1 + conf_level) / 2) * stderr
-  lower_ci <- mean_val - error_margin
-  upper_ci <- mean_val + error_margin
-  return(data.frame(Mean = mean_val, Lower_CI = lower_ci, Upper_CI = upper_ci))
-}
+
+
+
 
 # Apply CI calculation to the mean scores
-mean_scores_with_ci <- merged_group_scores %>%
+# working!!
+mean_scores_with_ci2 <- merged_group_scores %>%
   group_by(Group, Theoretical_classification2) %>%
+  drop_na() %>%
   summarize(
-    Mean_Score = mean(Mean_Score, na.rm = TRUE),
-    Lower_CI = mean(Mean_Score, na.rm = TRUE) - qnorm(0.975) * (sd(Mean_Score, na.rm = TRUE) / sqrt(n())),
-    Upper_CI = mean(Mean_Score, na.rm = TRUE) + qnorm(0.975) * (sd(Mean_Score, na.rm = TRUE) / sqrt(n())),
-    .groups = 'drop'
-  )
+    Mean_Score = mean(Score, na.rm = TRUE),
+    Lower_CI = mean(Score, na.rm = TRUE) - qnorm(0.975) * (sd(Score, na.rm = TRUE) / sqrt(n())),
+    Upper_CI = mean(Score, na.rm = TRUE) + qnorm(0.975) * (sd(Score, na.rm = TRUE) / sqrt(n())),
+    .groups = 'drop')
+
+mean_scores_with_ci2 <- mean_scores_with_ci2 %>%
+  mutate(Group = recode(Group, "group0" = "Control group", "group2" = "Involved group")) %>%
+  mutate(Theoretical_classification2 = recode(Theoretical_classification2, "action" = "Action-focused efficacy beliefs", "aim" = "Aim-focused efficacy beliefs")) #%>%
+#rename(`Types of Efficacy` = Type)
+
+# Define custom colors2
+custom_colors3 <- c("#7570B3", "#666666")
 
 
 # Plotting the results with annotation and error bars
@@ -978,6 +1021,21 @@ mean_scores_with_ci <- merged_group_scores %>%
 ggsave(rq2b_bars_compare_groups_aim_action, file = "outputs/rq2b_bars_compare_groups_aim_action.png", width = 7, height = 5)
 
 
+# plotting (same as above)
+(rq2b_boxplot_aim_action <- ggplot(mean_scores_with_ci2, aes(x = Theoretical_classification2, y = Mean_Score, fill = Theoretical_classification2)) +
+    geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
+    geom_errorbar(aes(ymin = Lower_CI, ymax = Upper_CI), width = 0.2, position = position_dodge(0.7)) +
+    facet_wrap(~ Group, scales = "fixed") +
+    labs(y = "\n\nMean Value") +
+    theme_clean() +
+    scale_fill_manual(values = custom_colors3) + 
+    theme(axis.title.x = element_blank(),            # Remove x-axis title
+          axis.text.x = element_blank(),             # Remove x-axis text
+          axis.ticks.x = element_blank(),            # Remove x-axis ticks
+          legend.position = "bottom")+
+    guides(fill = guide_legend(title = NULL)))    # Remove the legend title)
+
+ggsave(rq2b_boxplot_aim_action, file = "outputs/rq2b_boxplot_aim_action.png", width = 7, height = 5)
 
 
 # clean theme ----
@@ -997,6 +1055,7 @@ theme_clean <- function(){
           legend.title = element_text(size = 12, face = "bold"),                              
           legend.position = c(0.2, 0.8))
 }
+
 
 
 
