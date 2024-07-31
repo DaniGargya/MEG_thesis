@@ -1,0 +1,151 @@
+---
+title: " "
+output:
+  pdf_document:
+    number_sections: TRUE
+    latex_engine: xelatex
+geometry: "left = 2.5cm, right = 2cm, top = 2cm, bottom = 2cm"
+fontsize: 11pt
+header-includes:
+  - \usepackage{float}
+  - \usepackage{sectsty}
+  - \usepackage{paralist}
+  - \usepackage{setspace}\spacing{1.5}
+  - \usepackage{fancyhdr}
+  - \usepackage{lastpage}
+  - \usepackage{dcolumn}
+  - \usepackage[font={small}]{caption}
+  - \usepackage{fontspec}
+  - \usepackage[document]{ragged2e}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
+tidy.opts=list(width.cutoff = 60))
+library(units)
+
+```
+
+\allsectionsfont{\raggedright}
+
+\setmainfont{Arial}
+
+\pagenumbering{gobble}
+
+\centering
+
+\vspace{3 cm}
+
+```{r uni logo, echo=F, out.width = '20%'}
+knitr::include_graphics("outputs/uni_logo.jpg")
+```
+
+\vspace{0.5 cm}
+
+\normalsize
+\singlespacing
+Albert-Ludwig-University Freiburg 
+
+Faculty of Environment and Natural Resources
+
+\vspace{1 cm}
+
+```{=tex}
+\Large
+\doublespacing
+```
+**Measuring What Matters: Towards A Comprehensive**
+
+**Approach to Measuring Students‘ Sustainability**
+
+**Competencies by Integrating Efficacy Beliefs**
+
+\vspace{0.7 cm}
+
+```{=tex}
+\normalsize
+\singlespacing
+```
+Master-thesis submitted in partial fulfilment of the requirements for the degree of 
+
+Master of Science Environmental Governance
+
+\vspace{0.5 cm}
+
+by
+
+\vspace{0.5 cm}
+
+\Large
+
+**Daniela Naveena Gargya**
+
+\normalsize
+
+5107568
+
+\vspace{0.3 cm}
+
+```{r MEG logo, echo=F, out.width = '20%'}
+knitr::include_graphics("outputs/MEG_logo.jpg")
+```
+
+\vspace{0.3 cm}
+
+\normalsize
+
+First supervisor: Prof. Dr. Astrid Carrapatoso, Pädagogische Hochschule Freiburg 
+
+Second supervisor: Prof. Dr. Uwe Schmidt, Albert-Ludwigs-Universität Freiburg
+
+\vspace{0.3 cm}
+\singlespacing
+Freiburg i.Br. / Germany
+
+Date of submission: 02. August 2024
+
+\justify
+
+\newpage
+
+\pagenumbering{gobble}
+
+\textbf{Summary}
+
+\spacing{1.5}
+
+Globally, biodiversity is changing in complex ways in a time of accelerating human impact. We lack real-world data how cumulative large-scale anthropogenic activity, as a prominent contemporary global change driver, is influencing the re-shuffling of ecological communities over time. Despite calls for more encompassing tests, research has mostly focussed on individual types of environmental change. Here, I quantify the influence of multiple types of human impacts captured with the proxy accessibility to cities on ecological assemblages worldwide by analysing change in 5787 time-series across birds, mammals, plants and invertebrates. Surprisingly, I found that for every 10% increase in accessibility, species replacement (turnover) decreased by 1.6 %. I further highlight the need to account for both direct and indirect effects of human activities. Turnover was highest for invertebrates and mammals and lowest for birds and plants. My findings demonstrate the complexity of real-world biodiversity change and challenge the assumption that current conservation focus on protecting wilderness areas might not be sufficient to achieve biodiversity composition conservation goals.
+
+\pagenumbering{roman}
+
+\newpage
+
+```{=tex}
+\centering
+\raggedright
+\tableofcontents
+\justify
+```
+\newpage
+
+\section*{Acknowledgements}
+
+I would like to thank my supervisors, Dr Isla Myers-Smith and Gergana Daskalova for their constant support, shared knowledge and encouragement throughout the process of this dissertation and beyond. From finding a research question, to help with statistical analysis, coding, and writing tips, I always found open ears and patient explanations. Also, I am very grateful for the opportunity to have become part of Team Shrub, where I learned a lot during the weekly lab meetings while also having fun. The feedback Team Shrub provided me on one of my paragraphs was very useful.
+
+I also want to acknowledge and thank my great support network. Starting with my wonderful flatmates, Anna, Larisa and Giada, for always keeping the spirits high, but also giving valuable feedback and proofreading drafts. Also, I want to thank my parents and Max, for constant support and proofreading the draft.
+
+\newpage
+
+\section*{List of abbreviations}
+
+BACI Before after control impact
+
+CI Confidence Interval
+
+RQ Research question
+
+\newpage
+
+\pagenumbering{gobble}
+
+\pagenumbering{arabic}
