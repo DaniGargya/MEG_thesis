@@ -1,0 +1,50 @@
+---
+title: ''
+output: pdf_document
+header-includes:
+  - \usepackage{float}
+  - \usepackage{sectsty}
+  - \usepackage{paralist}
+  - \usepackage{fancyhdr}
+  - \usepackage{lastpage}
+  - \usepackage{dcolumn}
+---
+
+# Results
+
+## Sustainability competencies as sustainability attitudes and sustainability behaviours (TPB-based) (Research Question 1)
+
+Contrary to my prediction, I found that one year after the ESD intervention, sustainability attitudes and sustainability behaviours did not increase for either the involved or the control group (Figure 2) across the 206 surveys. I found no statistical differences between time points within any group (see Appendix D for statistical results).  In line with my predictions, I found that the involved group (n=7) reported (some) statistically higher sustainability attitudes and behaviours (cumulative SA/SB and SB) than the control group one year after the intervention (see Figure 2 and Table X for statistical outputs). The involved group reported higher mean scores than the control group for all sustainability competencies at all measurement points. Pre-intervention and one year post-intervention, the reported behaviour, intention and cumulative TPB scores differed significantly between the groups. Surprisingly, for the involved group, all reported sustainability competencies peaked immediately post-intervention (MP2) but decreased again one year after the intervention (MP3).
+
+```{r RQ1, echo=F, fig.cap="\\label{fig:fig1} The components of sustainability competencies differed between the groups of 206  students surveyed using the Wilcoxon test for significance (see Table XX for full test results). Points represent calculated means from self-reported surveys. Error bars indicate 95% confidence intervals. Data labels n indicate sample size. Stars indicate the level of significance obtained from the Wilcoxon signed rank test comparing the groups. See Table XX for the meaning of the number of stars. No significant differences were found between the measurement points using the Kruskal-Wallis test.",out.width = '100%',fig.show='hold',fig.pos="H", fig.align='center'}
+
+knitr::include_graphics("outputs/rq1_perfect_n.png")
+```
+
+
+## Sustainability attitudes/ sustainability behaviours (TPB-based) and efficacy beliefs (Research Question 2)
+
+  I found a strong positive relationship between the scales of sustainability attitudes and sustainability behaviours operationalised with the theory of planned behaviour and the scales operationalised with the construct of efficacy beliefs (r (47) = .79, p < .001, Figure 3, see Table X for statistical results). 
+
+```{r RQ2, echo=F, fig.cap="\\label{fig:fig1} The Theory of Planned Behaviour Sustainability Attitudes and Behaviours scales and the Efficacy Beliefs scales capture the same underlying construct and show a strong positive relationship among the 49 students surveyed, tested with Spearman's rank correlation. Points represent raw data. The line represents the calculated Spearman's rank correlation.",out.width = '80%',fig.show='hold',fig.pos="H", fig.align='center'}
+knitr::include_graphics("outputs/rq2a_graph_cor_tpb_sw.png")
+```
+
+
+## Sustainability competencies as efficacy beliefs (Research Question 3)
+
+### Personal and collective efficacy beliefs
+
+Contrary to my predictions, I found no statistical differences between personal and collective efficacy beliefs within and between the involved and control groups (Figure 4) among the 49 students surveyed at measurement point 3. The reported mean scores of the involved group were higher than those of the control group for both collective and personal efficacy beliefs. Overall, I did not find any statistical differences and the means were all very close to each other.
+
+
+```{r RQ3a, echo=F, fig.cap="\\label{fig:fig1} Reported personal and collective efficacy beliefs were not significantly different within and between the involved and control groups (see Table XX for full statistical test results) using the Wilcoxon sign ranked test at measurement point 3. Bars represent calculated means from the self-report survey. Error bars indicate 95% confidence intervals. Data labels n indicate sample size.",out.width = '90%',fig.show='hold',fig.pos="H", fig.align='center'}
+knitr::include_graphics("outputs/rq2b_boxplot_sw_cs_overall_n.png")
+```
+
+### Aim- and action-focussed efficacy beliefs
+In line with my predictions, I found that the involved group reported significantly higher scores for aim-focus than the control group (W = 8, p < .05, Figure 5, see Table X for statistical results) at measurement point 3. Although the involved group also scored higher on the action-focus, there were no statistical differences (W = 1, p > .05). I found no differences between the action and aim scores for the involved group (W = 1, p > .05) or the control group (W = 1, p > .05).
+
+```{r RQ3b, echo=F, fig.cap="\\label{fig:fig1} The aim-focused aspect of efficacy beliefs was significantly higher for the involved group than the control group across the XX students surveyed using the Wilcoxon signed rank test at measurement point 3. The action-focused aspect and the within-group comparison were not significantly different. Bars represent calculated means from the self-report survey. Error bars indicate 95% confidence intervals. Data labels n indicate sample size. Stars indicate the level of significance obtained from the Wilcoxon signed rank test comparing the groups. See Table 4 for the meaning of the number of stars.",out.width = '90%',fig.show='hold',fig.pos="H", fig.align='center'}
+knitr::include_graphics("outputs/rq2b_boxplot_aim_action_n.png")
+```

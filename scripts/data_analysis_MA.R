@@ -28,6 +28,7 @@ library(purrr)
 library(psych) # for cronbach alpha
 library(ggrepel)
 library(readxl)
+library(knitr)
 
 
 
@@ -334,20 +335,40 @@ kw_results <- combined_df_g02 %>%
   filter(!Category %in% c("SW_Mean", "CS_Mean", "SW_CS_Mean")) %>% #exclude irrelevant categories for this analysis
   group_by(Category, Group) %>%
   summarise(
-    kruskal_p_time = kruskal.test(MeanValue ~ Time_Point)$p.value,
-    .groups = 'drop') %>%
+    P_value = kruskal.test(MeanValue ~ Time_Point)$p.value,
+    Kruskal_Wallis_H = kruskal.test(MeanValue ~ Time_Point)$statistic,  # Extract Kruskal-Wallis H statistic
+    .groups = 'drop') #%>%
   mutate(significance_time = case_when(
       kruskal_p_time < 0.001 ~ "***",
       kruskal_p_time < 0.01 ~ "**",
       kruskal_p_time < 0.05 ~ "*",
       TRUE ~ ""))
+  
+kw_results <- kw_results %>%
+  mutate(Group = as.character(Group)) %>%
+    mutate(Group = case_when(
+      Group == "group0" ~ "Control group",
+      Group == "group2" ~ "Involved group",
+      TRUE ~ Group)) %>%
+    rename(Scale = Category)
+
+
+# Create the table with kable
+markdown_table_kruskal <- kable(kw_results, format = "markdown", 
+                        col.names = c("Scale", "Group", "P-Value", "Kruskal-Wallis H"))
+
+# Save the Markdown table to a text file
+writeLines(markdown_table_kruskal, "outputs/markdown_table_kruskal.md")
+
+
 
 # Wilcoxon rank-sum test for groups within each category and time point
-wilcox_results <- combined_df_g02 %>%
+wilcox_results_rq1 <- combined_df_g02 %>%
   filter(!Category %in% c("SW_Mean", "CS_Mean", "SW_CS_Mean")) %>% #exclude irrelevant categories for this analysis
   group_by(Category, Time_Point) %>%
   summarise(
     wilcox_p_group = wilcox.test(MeanValue ~ Group)$p.value,
+    W_Statistic = wilcox.test(MeanValue ~ Group)$statistic,
     .groups = 'drop'
   ) %>%
   mutate(
@@ -358,6 +379,17 @@ wilcox_results <- combined_df_g02 %>%
       TRUE ~ ""
     )
   )
+
+wilcox_results_rq1 <- wilcox_results_rq1 %>%
+  rename(Scale = Category)
+
+
+# Create the table with kable
+markdown_table_wilcox_rq1 <- kable(wilcox_results_rq1, format = "markdown", 
+                                col.names = c("Scale", "Measurement Point", "P-Value", "W Statistic", "Significance symbols"))
+
+# Save the Markdown table to a text file
+writeLines(markdown_table_wilcox_rq1, "outputs/markdown_table_wilcox_rq1.md")
 
 # Merge results back into the main dataframe
 combined_df_g02 <- combined_df_g02 %>%
@@ -621,16 +653,29 @@ df_tp3 <- combined_df_g02 %>%
 
 
 ### checking wilcoxon for differences in SW/ CS between groups
-wilcox_results_sw_cs <- df_tp3 %>%
+wilcox_rq3_sw_cs_between <- df_tp3 %>%
   group_by(Category) %>%
+  rename(Scale = Category) %>%
   summarise(wilcox_p_group = wilcox.test(MeanValue ~ Group)$p.value,
-    .groups = 'drop') %>%
+            W_Statistic = wilcox.test(MeanValue ~ Group)$statistic,
+    .groups = 'drop') #%>%
   mutate(significance_group = case_when(
       wilcox_p_group < 0.001 ~ "***",
       wilcox_p_group < 0.01 ~ "**",
       wilcox_p_group < 0.05 ~ "*",
       TRUE ~ ""))
 # no significant differences between the groups
+
+
+# Create the table with kable
+markdown_table_wilcox_rq3_sw_cs_between <- kable(wilcox_rq3_sw_cs_between, format = "markdown", 
+                                   col.names = c("Scale", "P-Value", "W Statistic")) 
+                                   
+
+# Save the Markdown table to a text file
+writeLines(markdown_table_wilcox_rq3_sw_cs_between, "outputs/markdown_table_wilcox_rq3_sw_cs_between.md")
+
+
 
 
 # Calculate means for each Group and Competence
@@ -682,6 +727,26 @@ wilcoxon_results_overall <- rbind(results_group0_overall, results_group2_overall
 
 # Add Significance column for stars
 wilcoxon_results_overall$Significance <- ifelse(wilcoxon_results_overall$P_Value < 0.05, "*", "")
+
+# create table
+wilcoxon_rq3_sw_cs_within <- wilcoxon_results_overall %>%
+  mutate(Group = as.character(Group)) %>%
+  mutate(Group = case_when(
+    Group == "group0" ~ "Control group",
+    Group == "group2" ~ "Involved group",
+    TRUE ~ Group))
+
+
+# Create the table with kable
+markdown_table_wilcoxon_rq3_sw_cs_within <- kable(wilcoxon_rq3_sw_cs_within, format = "markdown", 
+                                                 col.names = c("Group", "W Statistic", "P-Value")) 
+                                                 
+
+# Save the Markdown table to a text file
+writeLines(markdown_table_wilcoxon_rq3_sw_cs_within, "outputs/markdown_table_wilcox_rq3_sw_cs_within.md")
+
+
+
 
 
 # Prepare data for visualization
@@ -939,6 +1004,20 @@ wilcoxon_results_aim_action$Statistic <- sapply(wilcoxon_results_aim_action$W_te
 # Add significance stars
 wilcoxon_results_aim_action$Significance <- ifelse(wilcoxon_results_aim_action$P_Value < 0.05, "*", "")
 
+# create table
+wilcox_rq3_aim_action_between <- wilcoxon_results_aim_action %>%
+  select(-W_test)
+
+
+markdown_table_wilcox_rq3_aim_action_between <- kable(wilcox_rq3_aim_action_between, format = "markdown", 
+                                                 col.names = c("Theoretical classification", "P-Value", "W Statistic", "Significance symbol")) 
+
+
+# Save the Markdown table to a text file
+writeLines(markdown_table_wilcox_rq3_aim_action_between, "outputs/markdown_table_wilcox_rq3_aim_action_between.md")
+
+
+
 # Merge Wilcoxon test results back into the main dataframe for plotting
 merged_group_scores <- merged_group_scores %>%
   left_join(wilcoxon_results_aim_action %>% select(Theoretical_classification2, Significance), by = "Theoretical_classification2")
@@ -982,6 +1061,21 @@ wilcoxon_results_aim_action2 <- rbind(results_group0_aa, results_group2_aa)
 wilcoxon_results_aim_action2$Significance <- ifelse(wilcoxon_results_aim_action2$P_Value < 0.05, "*", "")
 
 
+# create table
+wilcoxon_rq3_aim_action_within <- wilcoxon_results_aim_action2 %>%
+  mutate(Group = as.character(Group)) %>%
+  mutate(Group = case_when(
+    Group == "group0" ~ "Control group",
+    Group == "group2" ~ "Involved group",
+    TRUE ~ Group))
+
+
+# Create the table with kable
+markdown_table_wilcoxon_rq3_aim_action_within <- kable(wilcoxon_rq3_aim_action_within, format = "markdown", 
+                                                  col.names = c("Group", "W Statistic", "P-Value")) 
+
+# Save the Markdown table to a text file
+writeLines(markdown_table_wilcoxon_rq3_aim_action_within, "outputs/markdown_table_wilcoxon_rq3_aim_action_within.md")
 
 
 

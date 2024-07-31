@@ -1,0 +1,171 @@
+---
+title: ''
+output: pdf_document
+---
+
+# References
+
+Ajzen, I. (1991). The theory of planned behavior. Organizational Behavior and Human Decision Processes, 50(2), 179–211. https://doi.org/10.1016/0749-5978(91)90020-T
+
+Arcury, T. (1990). Environmental Attitude and Environmental Knowledge. Human Organization, 49(4), 300–304. https://doi.org/10.17730/humo.49.4.y6135676n433r880
+
+Armitage, C. J., & Conner, M. (2001). Efficacy of the Theory of Planned Behaviour: A meta-analytic review. British Journal of Social Psychology, 40(4), 471–499. https://doi.org/10.1348/014466601164939
+
+Bain, P. G., Hornsey, M. J., Bongiorno, R., Kashima, Y., & Crimston, C. R. (2013). Collective Futures: How Projections About the Future of Society Are Related to Actions and Attitudes Supporting Social Change. Personality and Social Psychology Bulletin, 39(4), 523–539. https://doi.org/10.1177/0146167213478200
+
+Bamberg, S., Fischer, D., & Geiger, S. M. (2021). Editorial: The Role of the Individual in the Great Transformation Toward Sustainability. Frontiers in Psychology, 12. https://doi.org/10.3389/fpsyg.2021.710897
+
+Bamberg, S., & Möser, G. (2007). Twenty years after Hines, Hungerford, and Tomera: A new meta-analysis of psycho-social determinants of pro-environmental behaviour. Journal of Environmental Psychology, 27(1), 14–25. https://doi.org/10.1016/j.jenvp.2006.12.002
+
+Bamberg, S., & Rees, J. (2015). Environmental Attitudes and Behavior: Measurement. In J. D. Wright (Ed.), International Encyclopedia of the Social & Behavioral Sciences (Second Edition) (pp. 699–705). Elsevier. https://doi.org/10.1016/B978-0-08-097086-8.91066-3
+
+Bamberg, S., & Rees, J. (2017). The impact of voluntary travel behavior change measures – A meta-analytical comparison of quasi-experimental and experimental evidence. Transportation Research Part A: Policy and Practice, 100, 16–26. https://doi.org/10.1016/j.tra.2017.04.004
+
+Bandura, A. (1978). Self-efficacy: Toward a unifying theory of behavioral change. Advances in Behaviour Research and Therapy, 1(4), 139–161. https://doi.org/10.1016/0146-6402(78)90002-4
+
+Bandura, A. (1997). Self-efficacy: The exercise of control. Freeman & Company.
+
+BMBF. (2020, November 17). Die UNESCO veröffentlicht ihre ‘BNE 2030’ Roadmap—BNE-Portal Kampagne. BNE-Portal - BNE-Portal Kampagne. https://www.bne-portal.de/bne/de/news/die-unesco-veroeffentlicht-ihre-bne-2030-roadmap.html
+
+Castiglione, A. (2020). Climate activism: What we know and what more we need to learn. A psychological and sociological review. OSF. https://doi.org/10.31234/osf.io/7brz3
+
+Cattaneo, L. B., Calton, J. M., & Brodsky, A. E. (2014). Status Quo Versus Status Quake: Putting the Power Back in Empowerment. Journal of Community Psychology, 42(4), 433–446. https://doi.org/10.1002/jcop.21619
+
+Chen, M.-F. (2015). Self-efficacy or collective efficacy within the cognitive theory of stress model: Which more effectively explains people’s self-reported proenvironmental behavior? Journal of Environmental Psychology, 42, 66–75. https://doi.org/10.1016/j.jenvp.2015.02.002
+
+Cocking, C., & Drury, J. (2004). Generalization of Efficacy as a Function of Collective Action and Intergroup Relations: Involvement in an Anti-Roads Struggle. Journal of Applied Social Psychology, 34(2), 417–444. https://doi.org/10.1111/j.1559-1816.2004.tb02555.x
+
+de Haan, G. (2006). The BLK ‘21’ programme in Germany: A ‘Gestaltungskompetenz’‐based model for Education for Sustainable Development. Environmental Education Research, 12(1), 19–32. https://doi.org/10.1080/13504620500526362
+
+Deci, E. L., & Ryan, R. M. (2008). Self-determination theory: A macrotheory of human motivation, development, and health. Canadian Psychology / Psychologie Canadienne, 49(3), 182–185. https://doi.org/10.1037/a0012801
+
+Döring, N., & Bortz, J. (2016). Forschungsmethoden und Evaluation in den Sozial- und Humanwissenschaften (5. Aufl.). https://doi.org/10.1007/978-3-642-41089-5
+
+Dumas, M., & Anderson, G. L. (2014). Qualitative research as policy knowledge: Framing policy problems and transforming education from the ground up. Education Policy Analysis Archives, 22, 11–11. https://doi.org/10.14507/epaa.v22n11.2014
+
+Ertz, M., Karakas, F., & Sarigöllü, E. (2016). Exploring pro-environmental behaviors of consumers: An analysis of contextual factors, attitude, and behaviors. Journal of Business Research, 69(10), 3971–3980. https://doi.org/10.1016/j.jbusres.2016.06.010
+
+Field, A., & Miles, J. (2010). Discovering Statistics Using SAS. 1–752.
+
+FMER. (2017). National Action Plan on Education for Sustainable Development—The German contribution to the UNESCO Global Action Programme. Federal Ministry of Education and Research. https://www.unesco.de/sites/default/files/2020-04/NAP_BNE_EN_2019.pdf
+
+Frick, J., Kaiser, F. G., & Wilson, M. (2004). Environmental knowledge and conservation behavior: Exploring prevalence and structure in a representative sample. Personality and Individual Differences, 37(8), 1597–1613. https://doi.org/10.1016/j.paid.2004.02.015
+
+Getzin, S., & Singer-Brodowski, M. (2017). Transformatives Lernen in einer Degrowth-Gesellschaft. SOCIENCE - Journal of Science-Society Interfaces, 1, 33–46.
+
+Grunenberg, H., Küster, K., & Rode, H. (2012). Greenpeace Nachhaltigkeitsbarometer – Was bewegt die Jugend?
+
+Hamann, K. R. S., & Reese, G. (2020). My Influence on the World (of Others): Goal Efficacy Beliefs and Efficacy Affect Predict Private, Public, and Activist Pro-environmental Behavior. Journal of Social Issues, 76(1), 35–53. https://doi.org/10.1111/josi.12369
+
+Hamann, K. R. S., Wullenkord, M. C., Reese, G., & van Zomeren, M. (2024). Believing That We Can Change Our World for the Better: A Triple-A (Agent-Action-Aim) Framework of Self-Efficacy Beliefs in the Context of Collective Social and Ecological Aims. Personality and Social Psychology Review: An Official Journal of the Society for Personality and Social Psychology, Inc, 28(1), 11–53. https://doi.org/10.1177/10888683231178056
+
+Handley, M. A., Lyles, C. R., McCulloch, C., & Cattamanchi, A. (2018). Selecting and Improving Quasi-Experimental Designs in Effectiveness and Implementation Research. Annual Review of Public Health, 39(Volume 39, 2018), 5–25. https://doi.org/10.1146/annurev-publhealth-040617-014128
+
+Hoffmann, D. T. (2020). Bildung für nachhaltige Entwicklung – Begriff, Merkmale, Aufgaben. Bildung für nachhaltige Entwicklung.
+
+Hornsey, M. J., Blackwood, L., Louis, W., Fielding, K., Mavor, K., Morton, T., O’Brien, A., Paasonen, K.-E., Smith, J., & White, K. M. (2006). Why Do People Engage in Collective Action? Revisiting the Role of Perceived Effectiveness. Journal of Applied Social Psychology, 36(7), 1701–1722. https://doi.org/10.1111/j.0021-9029.2006.00077.x
+
+Hornsey, M. J., Chapman, C. M., & Oelrichs, D. M. (2022). Why it is so hard to teach people they can make a difference: Climate change efficacy as a non-analytic form of reasoning. Thinking & Reasoning, 28(3), 327–345. https://doi.org/10.1080/13546783.2021.1893222
+
+IPCC. (2023). AR6 Synthesis Report: Climate Change 2023 — IPCC. https://www.ipcc.ch/report/sixth-assessment-report-cycle/
+
+Jugert, P., Greenaway, K. H., Barth, M., Büchner, R., Eisentraut, S., & Fritsche, I. (2016). Collective efficacy increases pro-environmental intentions through increasing self-efficacy. Journal of Environmental Psychology, 48, 12–23. https://doi.org/10.1016/j.jenvp.2016.08.003
+
+Kagawa, F. (2007). Dissonance in students’ perceptions of sustainable development and sustainability: Implications for curriculum change. International Journal of Sustainability in Higher Education, 8(3), 317–338. https://doi.org/10.1108/14676370710817174
+
+Kaiser, F. G., Byrka, K., & Hartig, T. (2010). Reviving Campbell’s Paradigm for Attitude Research. Personality and Social Psychology Review, 14(4), 351–367. https://doi.org/10.1177/1088868310366452
+
+Kaiser, F. G., Doka, G., Hofstetter, P., & Ranney, M. A. (2003). Ecological behavior and its environmental consequences: A life cycle assessment of a self-report measure. Journal of Environmental Psychology, 23(1), 11–20. https://doi.org/10.1016/S0272-4944(02)00075-0
+
+Kaiser, F. G., Frick, J., & Stoll-Kleemann, S. (2001). Zur Angemessenheit selbstberichteten Verhaltens: Eine Validitätsuntersuchung der Skala Allgemeinen Ökologischen Verhaltens. Diagnostica, 47(2), 88–95. https://doi.org/10.1026//0012-1924.47.2.88
+
+Kaiser, F. G., Hübner, G., & Bogner, F. X. (2005). Contrasting the Theory of Planned Behavior With the Value-Belief-Norm Model in Explaining Conservation Behavior. Journal of Applied Social Psychology, 35(10), 2150–2170. https://doi.org/10.1111/j.1559-1816.2005.tb02213.x
+
+Klieme, E., & Hartig, J. (2008). Kompetenzkonzepte in den Sozialwissenschaften und im erziehungswissenschaftlichen Diskurs. In M. Prenzel, I. Gogolin, & H.-H. Krüger (Eds.), Kompetenzdiagnostik: Zeitschrift für Erziehungswissenschaft (pp. 11–29). VS Verlag für Sozialwissenschaften. https://doi.org/10.1007/978-3-531-90865-6_2
+
+KMK. (2023). Informationen zum deutschen Bildungssystem. https://www.kmk.org/dokumentation-statistik/informationen-zum-deutschen-bildungssystem.html
+
+Koletsou, A., & Mancy, R. (2011). Which efficacy constructs for large-scale social dilemma problems? Individual and collective forms of efficacy and outcome expectancies in the context of climate change mitigation. Risk Management, 13(4), 184–208. https://doi.org/10.1057/rm.2011.12
+
+Kollmuss, A., & Agyeman, J. (2002). Mind the Gap: Why do people act environmentally and what are the barriers to pro-environmental behavior? Environmental Education Research, 8(3), 239–260. https://doi.org/10.1080/13504620220145401
+
+Kormos, C., & Gifford, R. (2014). The validity of self-report measures of proenvironmental behavior: A meta-analytic review. Journal of Environmental Psychology, 40, 359–371. https://doi.org/10.1016/j.jenvp.2014.09.003
+
+Krettenauer, T. (2017). Pro-Environmental Behavior and Adolescent Moral Development. Journal of Research on Adolescence, 27(3), 581–593. https://doi.org/10.1111/jora.12300
+
+KRS website. (2024). KRS Project description. 1643125883s Webseite! https://www.klimaratschule.de/das-projekt/
+
+Krüger, D., Parchmann, I., & Schecker, H. (2014). Methoden in der naturwissenschaftsdidaktischen Forschung. https://doi.org/10.1007/978-3-642-37827-0
+
+Kruglanski, A., & Higgins, E. (2007). The Goal Construct in Social Psychology. In Social Psychology of Education (Vol. 1, pp. 334–352). https://doi.org/10.1007/BF02333407
+
+Lambrechts, W., Mulà, I., Ceulemans, K., Molderez, I., & Gaeremynck, V. (2013). The integration of competences for sustainable development in higher education: An analysis of bachelor programs in management. Journal of Cleaner Production, 48, 65–73. https://doi.org/10.1016/j.jclepro.2011.12.034
+
+Locke, E. A., & Latham, G. P. (2002). Building a practically useful theory of goal setting and task motivation: A 35-year odyssey. American Psychologist, 57(9), 705–717. https://doi.org/10.1037/0003-066X.57.9.705
+
+Ministry of Education Baden Württemberg. (2016). Bildung und Kultur – Statistisches Landesamt Baden-Württemberg. https://www.statistik-bw.de/BildungKultur/
+
+Moustakas, C. (1994). Phenomenological research methods. SAGE Publications, Inc. https://doi.org/10.4135/9781412995658
+
+O’Flaherty, J., & Liddy, M. (2018). The impact of development education and education for sustainable development interventions: A synthesis of the research. Environmental Education Research, 24(7), 1031–1049. https://doi.org/10.1080/13504622.2017.1392484
+
+Pauli, L. S. (2023). Wirkungsevaluation des BNE-Projekts „KlimaRatSchule": Eine quantitative Analyse mithilfe der Theory of Planned Behavior. (unpublished Master thesis). Katholische Universität Eichstätt-Ingolstadt.
+
+ProBiKlima. (2024). https://www.ph-freiburg.de/recce/projekte/forschungsprojekte/probiklima.html
+
+Qualtrics. (2024). Sample Size Calculator (Stichprobenrechner) I Qualtrics. Qualtrics. https://www.qualtrics.com/de/erlebnismanagement/marktforschung/sample-size-calculator/
+
+R Core Team. (2021). R: The R Project for Statistical Computing. R: A Language and Enviroment for Statistical Computing. https://www.r-project.org/
+
+Reese, G., & Junge, E. A. (2017). Keep on Rockin’ in a (Plastic-)Free World: Collective Efficacy and Pro-Environmental Intentions as a Function of Task Difficulty. Sustainability, 9(2), Article 2. https://doi.org/10.3390/su9020200
+
+Rieckmann, M. (2021). Reflexion einer Bildung für nachhaltige Entwicklung aus bildungstheoretischer Perspektive. Religionspädagogische Beiträge, 44(2), Article 2. https://doi.org/10.20377/rpb-153
+
+Rieckmann, M., & Barth, M. (2016). Kompetenzentwicklungsprozesse in der Bildung für nachhaltige Entwicklung erfassen – Überblick über ein heterogenes Forschungsfeld.
+
+Rieckmann, M., & Barth, M. (2022). Educators’ Competence Frameworks in Education for Sustainable Development (pp. 19–26). https://doi.org/10.1007/978-3-030-91055-6_3
+
+Rieß, W. (2011). Bildung für nachhaltige Entwicklung: Theoretische Analysen und empirische Studien. Waxmann Verlag.
+
+Riess, W., Martin, M., Mischo, C., Kotthoff, H.-G., & Waltner, E.-M. (2022). How Can Education for Sustainable Development (ESD) Be Effectively Implemented in Teaching and Learning? An Analysis of Educational Science Recommendations of Methods and Procedures to Promote ESD Goals. Sustainability, 14(7), Article 7. https://doi.org/10.3390/su14073708
+
+Rieß, W., Mischo, C., & Waltner, E.-M. (2018). Ziele einer Bildung für nachhaltige Entwicklung in Schule und Hochschule: Auf dem Weg zu empirisch überprüfbaren Kompetenzen. GAIA  - Ecological Perspectives for Science and Society, 27(3), 298–305. https://doi.org/10.14512/gaia.27.3.10
+
+Schmitt, N. (1996). Uses and abuses of coefficient alpha. Psychological Assessment, 8(4), 350–353. https://doi.org/10.1037/1040-3590.8.4.350
+
+Skinner, E. A. (1991). Development and perceived control: A dynamic model of action in context. In Self processes and development (pp. 167–216). Lawrence Erlbaum Associates, Inc.
+
+Ssossé, Q., Wagner, J., & Hopper, C. (2021). Assessing the Impact of ESD: Methods, Challenges, Results. Sustainability, 13, 2854. https://doi.org/10.3390/su13052854
+
+Tajfel, H. (1978). Differentiation Between Social Groups: Studies in the Social Psychology of Intergroup Relations. European Association of Experimental Social Psychology by Academic Press.
+
+Tejedor, G., Segalàs, J., Barrón, Á., Fernández-Morilla, M., Fuertes, M. T., Ruiz-Morales, J., Gutiérrez, I., García-González, E., Aramburuzabala, P., & Hernández, À. (2019). Didactic Strategies to Promote Competencies in Sustainability. Sustainability, 11(7), Article 7. https://doi.org/10.3390/su11072086
+
+Terlau, W., & Hirsch, D. (2015). Sustainable Consumption and the Attitude-Behaviour-Gap Phenomenon—Causes and Measurements towards a Sustainable Development. Proceedings in Food System Dynamics, 0, Article 0. https://doi.org/10.18461/pfsd.2015.1516
+
+UNCED. (1992). United Nations Conference on Environment & Development Rio de Janerio, Brazil, 3 to 14 June 1992, Agenda 21. 1992. https://sustainabledevelopment.un.org/content/documents/Agenda21.pdf
+
+University of Zürich. (2024). Datenanalyse mit SPSS | Methodenberatung | UZH. https://www.methodenberatung.uzh.ch/de/datenanalyse_spss.html
+
+van Zomeren, M., Pauls, I. L., & Cohen-Chen, S. (2019). Is hope good for motivating collective action in the context of climate change? Differentiating hope’s emotion- and problem-focused coping functions. Global Environmental Change, 58, 101915. https://doi.org/10.1016/j.gloenvcha.2019.04.003
+
+van Zomeren, M., Saguy, T., & Schellhaas, F. M. H. (2013). Believing in “making a difference” to collective efforts: Participative efficacy beliefs as a unique predictor of collective action. Group Processes & Intergroup Relations, 16(5), 618–634. https://doi.org/10.1177/1368430212467476
+
+VerbundFDB. (2022). Genehmigungen für Erhebungen an Schulen – eine länderspezifische Übersicht. Verbund Forschungsdaten Bildung. https://www.forschungsdaten-bildung.de/genehmigungen
+
+Wals, A. E. J. (2006). The end of ESD... The beginning of transformative learning. Emphasizing the ‘E’ in ESD. In Proceedings of the Seminar on Education for Sustainable Development (pp. 42–59). https://library.wur.nl/WebQuery/wurpubs/353568
+
+Wals, A. E. J. (2012). Learning Our Way Out of Unsustainability: The Role of Environmental Education. In S. D. Clayton (Ed.), The Oxford Handbook of Environmental and Conservation Psychology (p. 0). Oxford University Press. https://doi.org/10.1093/oxfordhb/9780199733026.013.0032
+
+Wals, A. E. J., & Benavot, A. (2017). Can we meet the sustainability challenges? The role of education and lifelong learning. European Journal of Education, 52(4), 404–413. https://doi.org/10.1111/ejed.12250
+
+Waltner, E.-M., Overbeck, A., & Rieß, W. (2022). Application-Oriented Development of Outcome Indicators for Measuring Students’ Sustainability Competencies: Turning from Input Focus to Outcome Orientation. In G. Karaarslan-Semiz (Ed.), Education for Sustainable Development in Primary and Secondary Schools: Pedagogical and Practical Approaches for Teachers (pp. 205–219). Springer International Publishing. https://doi.org/10.1007/978-3-031-09112-4_15
+
+Waltner, E.-M., Rieß, W., & Mischo, C. (2019). Development and Validation of an Instrument for Measuring Student Sustainability Competencies. Sustainability, 11, 1717. https://doi.org/10.3390/su11061717
+
+Waltner, E.-M., Rieß, W., Mischo, C., Hörsch, C., & Scharenberg, K. (2021). Abschlussbericht: Bildung für nachhaltige Entwicklung – Umsetzung eines neuen Leitprinzips und seine Effekte auf Schüler/-innenseite. https://phfr.bsz-bw.de/frontdoor/index/index/docId/877
+
+Wiek, A., Withycombe, L., & Redman, C. L. (2011). Key competencies in sustainability: A reference framework for academic program development. Sustainability Science, 6(2), 203–218. https://doi.org/10.1007/s11625-011-0132-6
+
+Wullenkord, M. C., Tröger, J., Hamann, K. R. S., Loy, L. S., & Reese, G. (2021). Anxiety and climate change: A validation of the Climate Anxiety Scale in a German-speaking quota sample and an investigation of psychological correlates. Climatic Change, 168(3), 20. https://doi.org/10.1007/s10584-021-03234-6
+
