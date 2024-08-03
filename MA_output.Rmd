@@ -114,7 +114,7 @@ Date of submission: 02. August 2024
 
 \spacing{1.5}
 
-The critical role of education, particularly Education for Sustainable Development (ESD), in addressing escalating environmental and social challenges is widely acknowledged. However, we lack long-term empirical data on how innovative ESD interventions, as a promising educational approach, influence the sustainability competencies of students over time. Despite calls for more comprehensive testing, research has predominantly focused on either traditional learning methods or has utilized inadequate experimental research designs. In this study, I quantify the impact of an innovative ESD intervention, specifically the KlimaRatSchule project, on students' sustainability competencies, measured as sustainability attitudes, behaviours, and efficacy beliefs at one school, by analysing 206 self-reported surveys across three measurement points. The analysis revealed that the treatment group (n=7) demonstrated higher sustainability competencies compared to the control group (n=42) one year post ESD intervention. Additionally, I emphasized the importance of considering efficacy beliefs as a valuable outcome of ESD interventions and as a significant indicator for measuring sustainability competencies. My findings highlight the complexity of measuring real-world sustainability competencies and support calls for analysing and enhancing innovative ESD intervention methods as an educational design that can contribute to fostering human agency.
+The critical role of education, particularly Education for Sustainable Development (ESD), in addressing escalating environmental and social challenges is widely acknowledged. However, we lack long-term empirical data on how innovative ESD interventions, as a promising educational approach, influence the sustainability competencies of students over time. Despite calls for more comprehensive testing, research has predominantly focused on either traditional learning methods or has utilized inadequate experimental research designs. In this study, I quantify the impact of an innovative ESD intervention, specifically the KlimaRatSchule project, on students' sustainability competencies, measured as sustainability attitudes, behaviours, and efficacy beliefs at one school, by analysing 206 self-reported surveys across three measurement points. The analysis revealed that the treatment group (n=7) demonstrated higher sustainability competencies compared to the control group (n=42) one year post ESD intervention. Additionally, I emphasized the importance of considering efficacy beliefs as a valuable outcome of ESD interventions and as a notable indicator for measuring sustainability competencies. My findings highlight the complexity of measuring sustainability competencies that matter and support calls for analysing and enhancing innovative ESD intervention methods as an educational design that can contribute to fostering human agency.
 
 \pagenumbering{roman}
 
@@ -197,3 +197,19 @@ TPB Theory of planned behaviour
 
 ```{r child = 'MA_appendix.Rmd'}
 ```
+
+\newpage
+\section*{Declaration of submission of the Master thesis}
+
+I hereby declare that I have written the submitted Master thesis independently, have not used any sources and aids other than those specified and have labelled all content taken from other works as such. The Master thesis submitted is not or was not the subject of another examination procedure, neither in its entirety nor in significant parts.
+
+
+\vspace{3 cm}
+
+```{=tex}
+\hrule
+```
+
+\vspace{1 cm}
+
+Place, date / Signature

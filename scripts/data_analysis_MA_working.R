@@ -1,253 +1,28 @@
----
-title: " "
-output: pdf_document
-header-includes:
-  - \usepackage{float}
-  - \usepackage{sectsty}
-  - \usepackage{paralist}
-  - \usepackage{fancyhdr}
-  - \usepackage{lastpage}
-  - \usepackage{dcolumn}
-  - \usepackage{graphicx}
----
+# Data analysis for MA thesis MEG
+# Dani Gargya
+# June 24
 
-# Appendices
+# workflow ----
+# loading all relevant datasets
+# calculating means mzp3
+# harmonising data sets, combining them
+# making overview of all datasets
+# exlcuding group 1 from all datasets
+# check for normality of data
+# check for reliability (internal consistency) through cronbachs alpha
+# statistical analysis data
+### RQ1: Kruskal Wallis and wilcoxon test
+### RQ1: Spearman and Eta?
+### RQ2: Spearman
 
-## Appendix A: German scales used
-Table 7: The German scales used to measure sustainability attitudes and sustainability behaviours based on the Theory of Planned Behaviour.
-
-```{r table 7, echo=FALSE, out.width="80%"}
-knitr::include_graphics("outputs/table_sa_sb_german.png")
-```
-
-\newpage
-Table 8: The German scales used to measure efficacy beliefs based on the Triple-A framework by Hamann et al. (2024).
-
-```{r table 8, echo=FALSE, out.width="85%"}
-knitr::include_graphics("outputs/table_sw_german.png")
-```
-
-## Appendix B: Form Declaration of consent by parents
-```{r b, echo=FALSE, out.width="85%"}
-knitr::include_graphics("outputs/einverständnis_eltern1.png")
-```
-
-
-```{r einver, echo=FALSE, out.width="85%"}
-knitr::include_graphics("outputs/einverständnis_eltern2.png")
-```
-
-
-## Appendix C: Information slide given to students at measurement point 3
-
-```{r c, echo=FALSE, out.width="100%"}
-knitr::include_graphics("outputs/slide_sus.png")
-```
-
-## Appendix D: Statistical test results
-
-Table 9: Kruskal-Wallis test results comparing scores across 3 measurement points within groups (RQ1).
-
-```{r table 9,echo=FALSE, results='asis'}
-# Read the Markdown table file and output its contents
-cat(readLines("outputs/markdown_table_kruskal.md"), sep = '\n')
-```
-
-
-Table 10: Wilcoxon test results comparing groups across scales (RQ1).
-
-```{r table 10,echo=FALSE, results='asis'}
-# Read the Markdown table file and output its contents
-cat(readLines("outputs/markdown_table_wilcox_rq1.md"), sep = '\n')
-```
-
-Table 11: Wilcoxon test results comparing personal/collective efficacy within groups (RQ3).
-
-```{r table 11,echo=FALSE, results='asis'}
-# Read the Markdown table file and output its contents
-cat(readLines("outputs/markdown_table_wilcox_rq3_sw_cs_within.md"), sep = '\n')
-```
-
-\newpage
-Table 12: Wilcoxon test results comparing personal/collective efficacy between groups (RQ3).
-
-```{r table 12,echo=FALSE, results='asis'}
-# Read the Markdown table file and output its contents
-cat(readLines("outputs/markdown_table_wilcox_rq3_sw_cs_between.md"), sep = '\n')
-```
-
-Table 13: Wilcoxon test results comparing aim/action focused efficacy within groups (RQ3).
-
-```{r table 13,echo=FALSE, results='asis'}
-# Read the Markdown table file and output its contents
-cat(readLines("outputs/markdown_table_wilcoxon_rq3_aim_action_within.md"), sep = '\n')
-```
-
-Table 14: Wilcoxon test results comparing aim/action focused efficacy between groups (RQ3).
-
-```{r table 14,echo=FALSE, results='asis'}
-# Read the Markdown table file and output its contents
-cat(readLines("outputs/markdown_table_wilcox_rq3_aim_action_between.md"), sep = '\n')
-```
-
-
-## Appendix E: R Code
-
-R Code, including outputs, can be accessed through GitHub 
-https://github.com/DaniGargya/MEG_thesis.git.
-
-
-
-\subsubsection*{Data formatting and cleaning}
-```{r set up, eval = F}
-# Full R script analysing sustainability competencies of students
-# Master thesis project 2024, University of Freiburg
-# Daniela Gargya
-# July 2024
-
-# loading libraries ----
-library(tidyverse)
-library(ggplot2)
-library(dplyr) 
-library(haven) # to transform data from sav to csv
-library(readr) # to transform data from sav to csv
-
-# data conversion Paulis data from sav to csv ----
-#pre angell
-lisa_data_angell_pre <- read_sav("data/data_collection/data_pauli/ANGELL_PRE_anonym.SAV")
-write_csv(x=lisa_data_angell_pre, path="data/data_collection/data_pauli/angell_pre.csv")
-
-#post angell
-lisa_data_angell_post <- read_sav("data/data_collection/data_pauli/ANGELL_POST_anonym.SAV")
-write_csv(x=lisa_data_angell_post, path="data/data_collection/data_pauli/angell_post.csv")
-
-
-# import MP3 data and formating ----
-## copied from scoscie website: GNU R-SCript für Daten-Import
-ds_file = "rdata_KRSumfrage_2024-06-07_10-21.csv"
-options(encoding = "UTF-8")
-ds = read.delim(
-  file=ds_file, encoding="UTF-8", fileEncoding="UTF-8",
-  header = FALSE, sep = "\t", quote = "\"",
-  dec = ".", row.names = NULL,
-  col.names = c(
-    "CASE","SERIAL","REF","QUESTNNR","MODE","STARTED","AT01_01","AT01_02","AT01_03",
-    "AT01_04","B001_01","B001_02","B001_03","B001_04","B001_05","B001_06","B001_07",
-    "B001_08","B001_09","B001_10","CS01_01","CS01_02","CS01_03","IN01_01","IN01_02",
-    "IN01_03","PB01_01","PB01_02","SN01_01","SN01_02","SN01_03","SW01_01","SW01_02",
-    "SW01_03","SW01_04","SW01_05","SW01_06","SW01_07","SW01_08","WD01","WD02",
-    "WD02_01","WD02_02","WD02_03","TIME001","TIME002","TIME003","TIME004","TIME005",
-    "TIME006","TIME007","TIME008","TIME009","TIME_SUM","MAILSENT","LASTDATA",
-    "FINISHED","Q_VIEWER","LASTPAGE","MAXPAGE","MISSING","MISSREL","TIME_RSI"
-  ),
-  as.is = TRUE,
-  colClasses = c(
-    CASE="numeric", SERIAL="character", REF="character", QUESTNNR="character",
-    MODE="factor", STARTED="character", AT01_01="numeric", AT01_02="numeric",
-    AT01_03="numeric", AT01_04="numeric", B001_01="numeric", B001_02="numeric",
-    B001_03="numeric", B001_04="numeric", B001_05="numeric", B001_06="numeric",
-    B001_07="numeric", B001_08="numeric", B001_09="numeric", B001_10="numeric",
-    CS01_01="numeric", CS01_02="numeric", CS01_03="numeric", IN01_01="numeric",
-    IN01_02="numeric", IN01_03="numeric", PB01_01="numeric", PB01_02="numeric",
-    SN01_01="numeric", SN01_02="numeric", SN01_03="numeric", SW01_01="numeric",
-    SW01_02="numeric", SW01_03="numeric", SW01_04="numeric", SW01_05="numeric",
-    SW01_06="numeric", SW01_07="numeric", SW01_08="numeric", WD01="numeric",
-    WD02="numeric", WD02_01="logical", WD02_02="logical", WD02_03="logical",
-    TIME001="integer", TIME002="integer", TIME003="integer", TIME004="integer",
-    TIME005="integer", TIME006="integer", TIME007="integer", TIME008="integer",
-    TIME009="integer", TIME_SUM="integer", MAILSENT="character",
-    LASTDATA="character", FINISHED="logical", Q_VIEWER="logical",
-    LASTPAGE="numeric", MAXPAGE="numeric", MISSING="numeric", MISSREL="numeric",
-    TIME_RSI="numeric"
-  ),
-  skip = 1,
-  check.names = TRUE, fill = TRUE,
-  strip.white = FALSE, blank.lines.skip = TRUE,
-  comment.char = "",
-  na.strings = ""
-)
-
-row.names(ds) = ds$CASE
-
-rm(ds_file)
-
-
-### assign treatment/ control groups ----
-ds <- ds %>%
-  mutate(Group = ifelse(WD02_01, "group2", ifelse(WD02_03, "group0", "group1")))
-
-
-# exclude incomplete data ----
-# Function to count the number of NAs in a row
-count_nas <- function(row) {
-  sum(is.na(row))
-}
-
-# Apply the function to each row and create a new column 'count_nas'
-ds$count_nas <- apply(ds, 1, count_nas)
-
-# Filter the data frame to exclude rows with NAs
-ds_filtered <- ds[ds$count_nas <= 1, ]
-
-
-# exclude data with more than 25% missing (8 answers) ----
-# Function to count the number of -1s in a row
-count_minus_ones <- function(row) {
-  sum(row == -1, na.rm = TRUE)
-}
-
-ds_filtered$count_minus_ones <- apply(ds_filtered, 1, count_minus_ones)
-
-# Filter the data frame to exclude rows with more than eight -1s
-ds_filtered <- ds_filtered[ds_filtered$count_minus_ones <= 8, ]
-
-# exclude data with less than  2.5 min/ 150sec! processing time (instead of 4)----
-ds_filtered <- ds_filtered[ds_filtered$TIME_SUM >= 150, ]
-
-
-# data transformation # scaling according to Pauli (0-3, instead of 1-4) ----
-# Define a function to convert values
-convert_values <- function(x) {
-  x <- ifelse(x == 4, 3,
-              ifelse(x == 3, 2,
-                     ifelse(x == 2, 1,
-                            ifelse(x == 1, 0,
-                                   ifelse(x == -1, -100, 
-                                          x)))))
-  return(x)
-}
-
-
-# Apply the function to all columns of the data frame
-ds_scaled <- lapply(ds_filtered, convert_values)
-ds_scaled <- as.data.frame(ds_scaled)
-
-# invert certain scales to reflect meaning (AT2, B3, B4, B8, B9, SW3, SW5) ----
-# Define a function to inverse scales and add new columns
-inverse_scale_and_add_columns <- function(df, columns) {
-  for (col in columns) {
-    new_col_name <- paste(col, "inverse", sep = "_")
-    df[[new_col_name]] <- inverse_scale(df[[col]])
-  }
-  return(df)
-}
-
-# Apply the function to add extra columns with inverse scales
-ds_scaled_in <- inverse_scale_and_add_columns(ds_scaled, c("AT01_02", "B001_03", "B001_04", "B001_08", "B001_09", "SW01_03", "SW01_05"))
-
-# save formated dataset as csv (angell_mzp3) ----
-write_csv(x=ds_scaled_in, path="data/data_collection/angell_mzp3.csv")
-```
-
-\subsubsection*{Data analysis and visualisation}
-```{r data vis, eval = F}
-# Data analysis and visualisation
+# (making pretty graphs)
 
 # loading libraries ----
 library(tidyverse)
 library(ggplot2)
 library(RColorBrewer)
-library(ggthemes)
+library(ggthemes) # for data visualisation
+library(treemapify) # for data vis
 library(dplyr)
 library(purrr)
 library(psych) # for cronbach alpha
@@ -255,27 +30,7 @@ library(ggrepel)
 library(readxl)
 library(knitr)
 
-# create colour palette ----
-display.brewer.pal(n = 8, name = 'Dark2')
-brewer.pal(n = 8, name = "Dark2")
 
-# clean theme for graphs ----
-theme_clean <- function(){
-  theme_bw() +
-    theme(axis.text.x = element_text(size = 14),
-          axis.text.y = element_text(size = 14),
-          axis.title.x = element_text(size = 14, face = "plain"),             
-          axis.title.y = element_text(size = 14, face = "plain"),             
-          panel.grid.major.x = element_blank(),                                          
-          panel.grid.minor.x = element_blank(),
-          panel.grid.minor.y = element_blank(),
-          panel.grid.major.y = element_blank(),  
-          plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), units = , "cm"),
-          plot.title = element_text(size = 15, vjust = 1, hjust = 0.5),
-          legend.text = element_text(size = 12, face = "italic"),          
-          legend.title = element_text(size = 12, face = "bold"),                              
-          legend.position = c(0.2, 0.8))
-}
 
 # importing relevant data ----
 mzp1_clean <- read.csv("data/data_collection/data_pauli/angell_pre.csv")
@@ -283,7 +38,8 @@ mzp2_clean <- read.csv("data/data_collection/data_pauli/angell_post.csv")
 mzp3_clean <- read.csv("data/data_collection/angell_mzp3.csv")
 
 
-### calculate means MP3 ----
+
+# calculate means mzp3 ----
 # Define a function to calculate the mean, excluding -100 and NAs
 mean_exclude_negative_100 <- function(row) {
   values <- row[row != -100 & !is.na(row)]
@@ -322,7 +78,7 @@ mzp3_clean$TPB_mean <- apply(mzp3_clean[, c("AT_mean", "SN_mean", "PB_mean", "IN
 mzp3_clean$SW_CS_mean <- apply(mzp3_clean[, c("SW_mean", "CS_mean")], 1, mean_exclude_negative_100)
 
 
-### harmonising and combining dfs ----
+# harmonising and combining dfs ----
 # Add a time point indicator to each data frame
 mzp1_clean$TP <- "Measurement point 1"
 mzp2_clean$TP <- "Measurement point 2"
@@ -407,11 +163,61 @@ combined_df$Group <- as.factor(combined_df$Group)
 combined_df$Time_Point <- as.factor(combined_df$Time_Point)
 combined_df$Category <- as.factor(combined_df$Category)
 
-### excluding group 1 from dataset ----
+
+# overview of all datasets with treemap ----
+# Summarize the data: count number of answers per group per time point
+summary_data <- combined_df %>%
+  filter(Group != "group1") %>%
+  mutate(Group = recode(Group, "group0" = "control group", "group2" = "involved group")) %>%
+  group_by(Group, Time_Point) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  mutate(Count = ifelse(Time_Point %in% c("Measurement point 1", "Measurement point 2"), Count / 6, Count / 9)) %>% # adjust with calculated means per mzp
+  mutate(Alpha = ifelse(Group == "group1", 0.1, 1)) 
+
+# Create the treemap
+(treemap_mzps_groups <- ggplot(summary_data, aes(area = Count, fill = as.factor(Group), label = Count,
+                                         subgroup = as.factor(Time_Point), subgroup2 = as.factor(Group))) +
+  geom_treemap(aes(alpha = Alpha)) +
+  geom_treemap_text(colour = "white", place = "centre", reflow = TRUE) +
+  geom_treemap_subgroup_border(colour = "black", size = 2) +
+  geom_treemap_subgroup2_border(colour = "white", size = 1) +
+  geom_treemap_subgroup_text(place = "centre", grow = TRUE, alpha = 0.5, colour = "black", fontface = "italic", reflow = TRUE) +
+  scale_fill_brewer(palette = "Dark2") +
+  scale_alpha_identity() +
+  #scale_fill_treemap(values = c("group0" = "stripe", "group1" = "dot", "group2" = "solid")) +  # Use pattern fills
+  labs(title = "Treemap of Answers per Group per Time Point", fill = "Group") +
+  theme_clean()) # Adjust the limits to increase space between timepoints)
+
+# new
+(treemap_mzps_groups <- ggplot(summary_data, aes(area = Count, fill = as.factor(Group), label = Count,
+                                                subgroup = as.factor(Time_Point))) +
+  geom_treemap() +
+  geom_treemap_text(colour = "white", place = "centre") +
+  geom_treemap_subgroup_border(colour = "black", size = 2) +
+  geom_treemap_subgroup_text(place = "centre", grow = TRUE, colour = "black", fontface = "italic", size = 5) +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(title = "Treemap of Answers per Group per Time Point", fill = "Group") +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 12),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 10)
+  ) +
+  guides(fill = guide_legend(title.position = "top", title.hjust = 0.5)))
+
+
+ggsave(treemap_mzps_groups, filename = "outputs/treemap_mzps_groups.png",
+       height = 5, width = 8)
+
+# excluding group 1 from dataset ----
 combined_df_g02 <- combined_df %>%
   filter(Group != "group1")
 
-### check for normality of data ----
+# check for normality of data ----
 ### MZP1
 # exclude group1
 selected_columns_t1 <- selected_columns_t1 %>%
@@ -476,7 +282,10 @@ normality_test_t3 <- function(col) {
 normality_results_t3 <- map_dfr(mean_cols_t3, normality_test_t3)
 
 
-### calculating internal validity with cronbach alpha MZP3 ----
+# calculating internal validity with cronbach alpha MZP3 ----
+# stichprobengröße, siehe sample size calculator
+
+
 # Convert -100 to NA
 mzp3_cleaner <- mzp3_clean %>%
   filter(Group != "group1") %>%
@@ -490,8 +299,12 @@ columns_to_exclude_without_inverse <- gsub("_inverse", "", columns_with_inverse)
 filtered_df_cronbach <- mzp3_cleaner %>%
   select(matches("_0[1-9]$|_10$|_inverse"), -matches("WD")) %>%
   select(-one_of(columns_to_exclude_without_inverse)) %>%
-  select(-c("B001_03_inverse", "B001_04_inverse")) 
-#excluding these two items to  increase Cronbachs alpha, see MA Pauli S.70
+  select(-c("B001_03_inverse", "B001_04_inverse")) #excluding these two items to  increase Cronbachs alpha, see MA Pauli S.70
+
+
+# Handle missing values by dropping rows with NAs
+#filtered_df_cronbach <- filtered_df_cronbach %>%
+#  na.omit() --> only 14 left!
 
 # handle missing values by using the mean
 filtered_df_cronbach <- filtered_df_cronbach %>% 
@@ -499,6 +312,7 @@ filtered_df_cronbach <- filtered_df_cronbach %>%
 
 # Group the columns based on the first two letters of the column name
 groups <- split.default(filtered_df_cronbach, sub("^(..).*", "\\1", names(filtered_df_cronbach)))
+
 
 # Calculate Cronbach's alpha for each group
 alpha_results <- lapply(groups, function(x) {
@@ -515,14 +329,14 @@ df_alpha <- data.frame(
 
 
 # Statistical analyses ----
-### RQ1 Comparing SA/SB over time and between groups ----
+### RQ1 kruskal and wilcoxon test groups, timepoints and display in graph with stars ----
 # Kruskal-Wallis test for time points within each category and group
 kw_results <- combined_df_g02 %>%
-  filter(!Category %in% c("SW_Mean", "CS_Mean", "SW_CS_Mean")) %>% 
+  filter(!Category %in% c("SW_Mean", "CS_Mean", "SW_CS_Mean")) %>% #exclude irrelevant categories for this analysis
   group_by(Category, Group) %>%
   summarise(
     P_value = kruskal.test(MeanValue ~ Time_Point)$p.value,
-    Kruskal_Wallis_H = kruskal.test(MeanValue ~ Time_Point)$statistic,  
+    Kruskal_Wallis_H = kruskal.test(MeanValue ~ Time_Point)$statistic,  # Extract Kruskal-Wallis H statistic
     .groups = 'drop') #%>%
   mutate(significance_time = case_when(
       kruskal_p_time < 0.001 ~ "***",
@@ -546,9 +360,11 @@ markdown_table_kruskal <- kable(kw_results, format = "markdown",
 # Save the Markdown table to a text file
 writeLines(markdown_table_kruskal, "outputs/markdown_table_kruskal.md")
 
+
+
 # Wilcoxon rank-sum test for groups within each category and time point
 wilcox_results_rq1 <- combined_df_g02 %>%
-  filter(!Category %in% c("SW_Mean", "CS_Mean", "SW_CS_Mean")) %>% 
+  filter(!Category %in% c("SW_Mean", "CS_Mean", "SW_CS_Mean")) %>% #exclude irrelevant categories for this analysis
   group_by(Category, Time_Point) %>%
   summarise(
     wilcox_p_group = wilcox.test(MeanValue ~ Group)$p.value,
@@ -580,8 +396,10 @@ combined_df_g02 <- combined_df_g02 %>%
   left_join(kw_results, by = c("Category", "Group")) %>%
   left_join(wilcox_results, by = c("Category", "Time_Point"))
 
+
 # Calculate the means for each Group, Competence, and TimePoint
 # adding error bars
+# excluding irrelevant groups
 df_means <- combined_df_g02 %>%
   filter(!Category %in% c("SW_Mean", "CS_Mean", "SW_CS_Mean")) %>% #exclude irrelevant categories for this analysis
   group_by(Group, Category, Time_Point) %>%
@@ -591,6 +409,89 @@ df_means <- combined_df_g02 %>%
             .groups = 'drop') %>%
   left_join(kw_results, by = c("Category", "Group")) %>%
   left_join(wilcox_results, by = c("Category", "Time_Point"))
+
+
+
+
+
+
+
+# Plot with significance symbols
+# old?
+(rq1_graph_prettier_stars <- ggplot(df_means1, aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), width = 0.1) +  # Adding error bars
+  facet_wrap(~ Category, scales = "fixed", labeller = facet_labeller) +
+  labs(title = "Comparison of Groups by Competences and Time Points",
+       x = "Time Point",
+       y = "Mean Value",
+       color = "Group") +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  geom_text_repel(data = df_means %>% filter(significance_group != ""),
+                    aes(x = Time_Point, y = MeanValue2, label = significance_group), 
+                    vjust = -0.5, color = "black", size = 5, inherit.aes = FALSE) +  # Adjust vjust here
+  geom_text_repel(data = df_means %>% filter(significance_time != ""), 
+                    aes(x = Time_Point, y = MeanValue2, label = significance_time), 
+                    vjust = -1.0, color = "blue", size = 3, inherit.aes = FALSE))  # Adjust vjust here
+
+ggsave(rq1_graph_prettier_stars, file = "outputs/rq1_graph_prettier_stars.png", width = 7, height = 5)
+
+# making CSC bigger
+library(patchwork)
+
+# only one star
+# Summarize df_means to include only one significance annotation per time point with the correct number of stars
+df_means_grouped <- df_means %>%
+  mutate(Time_Point = recode(Time_Point, "t1" = "MP1", "t2" = "MP2", "t3" = "MP3")) %>%
+  group_by(Category, Time_Point) %>%
+  summarize(MeanValue2 = mean(MeanValue2, na.rm = TRUE),
+            LowerCI = mean(LowerCI, na.rm = TRUE),
+            UpperCI = mean(UpperCI, na.rm = TRUE),
+            significance_group = paste(unique(significance_group[significance_group != ""]), collapse = ""),
+            significance_time = paste(unique(significance_time[significance_time != ""]), collapse = "")) %>%
+  ungroup()
+
+# Create a plot for "Cumulated Sustainability Competences" without legend
+(cumulated_plot <- ggplot(df_means %>% filter(Category == "TPB_Mean"), aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), width = 0.1) +  # Adding error bars
+  labs(title = "Cumulated Sustainability Competences", x = "Time Point", y = "Mean Value") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  coord_cartesian(ylim = c(1, 2.5)) +  # Set y-axis limits to 1-2.5
+  geom_text_repel(data = df_means_grouped %>% filter(Category == "TPB_Mean" & significance_group != ""),
+                    aes(x = Time_Point, y = MeanValue2, label = significance_group), 
+                    vjust = -0.5, color = "black", size = 5, inherit.aes = FALSE) +  # Adjust vjust here
+  geom_text_repel(data = df_means_grouped %>% filter(Category == "TPB_Mean" & significance_time != ""), 
+                    aes(x = Time_Point, y = MeanValue2, label = significance_time), 
+                    vjust = -1.0, color = "blue", size = 3, inherit.aes = FALSE))
+
+
+# Create a plot for the other categories with consistent y-axis scales
+(other_plots <- ggplot(df_means %>% filter(Category != "TPB_Mean"), aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), width = 0.1) +  # Adding error bars
+  facet_wrap(~ Category, scales = "fixed", labeller = facet_labeller) +
+  labs(x = "Time Point", y = "Mean Value", color = "Group") +
+  theme_minimal() +
+  theme(legend.position = "right", plot.title = element_blank()) +
+  geom_text_repel(data = df_means_grouped %>% filter(Category != "TPB_Mean" & significance_group != ""),
+                    aes(x = Time_Point, y = MeanValue2, label = significance_group), 
+                    vjust = -0.5, color = "black", size = 5, inherit.aes = FALSE) +  # Adjust vjust here
+  geom_text_repel(data = df_means_grouped %>% filter(Category != "TPB_Mean" & significance_time != ""), 
+                    aes(x = Time_Point, y = MeanValue2, label = significance_time), 
+                    vjust = -1.0, color = "blue", size = 3, inherit.aes = FALSE))
+# Combine the plots
+(combined_plot <- (cumulated_plot / other_plots) + 
+  plot_layout(heights = c(1, 1))) # Adjust the heights to make the cumulated plot bigger
+
+ggsave(combined_plot, file = "outputs/rq1_combined_plot.png", width = 7, height = 9)
+
+# go back to one plot
 
 # Define a labeller function to rename facets
 facet_labeller <- labeller(Category = c(
@@ -612,7 +513,56 @@ custom_colors <- c("#E7298A", "#1B9E77")
 # Add a new factor level to control the order and size of the facets
 df_means1$Category <- factor(df_means1$Category, levels = c("AT_Mean", "INT_Mean", "B_Mean", "PBC_Mean", "SN_Mean", "TPB_Mean"))
 
-# Create the graph
+# theme clean 2
+theme_clean2 <- function(){
+  theme_bw() +
+    theme(axis.text.x = element_text(size = 14),
+          axis.text.y = element_text(size = 14),
+          axis.title.x = element_text(size = 14, face = "plain"),             
+          axis.title.y = element_text(size = 14, face = "plain"),             
+          panel.grid.major.x = element_blank(),                                          
+          panel.grid.minor.x = element_blank(),
+          panel.grid.minor.y = element_blank(),
+          panel.grid.major.y = element_blank(),  
+          #plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), # Corrected the unit specification
+          plot.title = element_text(size = 15, vjust = 1, hjust = 0.5),
+          legend.text = element_text(size = 12, face = "italic"),          
+          legend.title = element_text(size = 12, face = "bold"),                              
+          legend.position = "bottom") # Changed legend.position to a descriptive keyword for consistency
+}
+
+
+# Create the plot
+(rq1_graph_prettiest <- ggplot(df_means1, aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), width = 0.1) +  # Adding error bars
+  facet_wrap(~ Category, scales = "fixed", labeller = facet_labeller, ncol = 3) +  # 3x2 grid layout
+  labs(x = "\nMeasurement Points",
+       y = "Mean Value",
+       color = "Group") +
+  #theme_clean2() +  
+  scale_color_manual(values = custom_colors) +  # Custom colors for the groups
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(),   # Remove major grid lines
+          panel.grid.minor = element_blank(),   # Remove minor grid lines
+          legend.position = "bottom",
+        legend.text = element_text(size = 12, face = "italic"),          
+        legend.title = element_text(size = 12, face = "bold")) +
+    
+  #theme(legend.position = "bottom") +
+  geom_text_repel(data = df_means_grouped %>% filter(significance_group != ""),
+                  aes(x = Time_Point, y = MeanValue2, label = significance_group), 
+                  vjust = -1.5, color = "black", size = 6, inherit.aes = FALSE, segment.color = NA) +  # Adjust vjust here
+  geom_text_repel(data = df_means_grouped %>% filter(significance_time != ""), 
+                  aes(x = Time_Point, y = MeanValue2, label = significance_time), 
+                  vjust = -1.0, color = "blue", size = 3, inherit.aes = FALSE)+
+  guides(fill = guide_legend(title = NULL)))
+
+ggsave(rq1_graph_prettiest, file = "outputs/rq1_graph_prettiest2.png", width = 7, height = 5)
+
+
+# even perfect
 (rq1_graph_perfect <- ggplot(df_means1, aes(x = Time_Point, y = MeanValue2, group = Group, color = Group)) +
   geom_line() +
   geom_point() +
@@ -640,7 +590,11 @@ df_means1$Category <- factor(df_means1$Category, levels = c("AT_Mean", "INT_Mean
 ggsave(rq1_graph_perfect, file = "outputs/rq1_graph_perfect.png", width = 7, height = 5)
 
 
-### RQ2 relationship Efficacy and SA/SB (TPB) with spearman correlation at MZP3 ----
+### RQ2 relationship SW and TPB with spearman correlation at MZP3 ----
+# checking data
+# Scatter plot to visualize the relationship
+plot(mzp3_cleaner$TPB_mean, mzp3_cleaner$SW_mean, main = "Scatter plot of TPB_mean vs SW_mean", xlab = "TPB", ylab = "SW")
+
 # Shapiro-Wilk normality test
 shapiro.test(mzp3_cleaner$TPB_mean) #normally distributed p>0.05
 shapiro.test(mzp3_cleaner$SW_mean) #not normally distributed p<0.05
@@ -666,29 +620,26 @@ spearman_pval <- spearman_test$p.value
 
 ggsave(rq2a_graph_cor_tpb_sw, file = "outputs/rq2a_graph_cor_tpb_sw.png", width = 7, height = 5)
 
-### RQ3a: Comparing personal and collective efficacy between and within groups at MP3 ----
-# data preparation
-# Read the Excel file for classifications
-codebook_sw_cs <- read_excel("data/data_collection/codebook_sw_cs.xlsx")
-
-# Specify the questions of interest explicitly
-questions_sw <- c("CS01_01", "CS01_02", "CS01_03", "SW01_01", "SW01_02", "SW01_03_inverse", "SW01_04", "SW01_05_inverse", "SW01_06", "SW01_07", "SW01_08")
-
-# Calculate the mean scores for the specified questions
-mean_scores_sw <- colMeans(mzp3_cleaner[, questions_sw], na.rm = TRUE)
-
-# Convert the mean scores to a data frame for plotting
-mean_scores_sw_df <- data.frame(
-  Question = names(mean_scores_sw),
-  Mean_Score = mean_scores_sw
-)
-
-# Join the dataframes by the column 'Question'
-merged_sw_cs <- left_join(mean_scores_sw_df, codebook_sw_cs, by = "Question")
 
 
+### RQ3: self-efficacy and groups ----
 ### comparing between groups SW/CS ----
 # check distribution of data
+# Plot histograms
+for (question in questions_sw) {
+  p <- ggplot(mzp3_cleaner, aes_string(x = question)) +
+    geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 0.7) +
+    labs(title = paste("Histogram of", question), x = question, y = "Frequency") +
+    theme_minimal()
+  print(p)
+}
+
+# Plot QQ-plots
+for (question in questions_sw) {
+  qqnorm(mzp3_cleaner[[question]], main = paste("QQ-Plot of", question))
+  qqline(mzp3_cleaner[[question]], col = "red")
+}
+
 # Perform Shapiro-Wilk tests
 shapiro_results_sw_cs <- data.frame(
   Question = questions_sw,
@@ -701,7 +652,7 @@ df_tp3 <- combined_df_g02 %>%
   filter(Time_Point == "t3" & Category %in% c("SW_Mean", "CS_Mean"))
 
 
-### checking wilcoxon for differences in personal/collective between groups
+### checking wilcoxon for differences in SW/ CS between groups
 wilcox_rq3_sw_cs_between <- df_tp3 %>%
   group_by(Category) %>%
   rename(Scale = Category) %>%
@@ -715,12 +666,17 @@ wilcox_rq3_sw_cs_between <- df_tp3 %>%
       TRUE ~ ""))
 # no significant differences between the groups
 
+
 # Create the table with kable
 markdown_table_wilcox_rq3_sw_cs_between <- kable(wilcox_rq3_sw_cs_between, format = "markdown", 
                                    col.names = c("Scale", "P-Value", "W Statistic")) 
                                    
+
 # Save the Markdown table to a text file
 writeLines(markdown_table_wilcox_rq3_sw_cs_between, "outputs/markdown_table_wilcox_rq3_sw_cs_between.md")
+
+
+
 
 # Calculate means for each Group and Competence
 df_means3 <- df_tp3 %>%
@@ -734,7 +690,7 @@ df_means3 <- df_tp3 %>%
   left_join(wilcox_results_sw_cs, by = c("Category"))
 
 
-# comparing personal/collective within groups ----
+# comparing sw vs cs within groups ----
 # Aggregate scores for CS and SW questions within each group
 aggregate_scores <- mzp3_cleaner %>%
   pivot_longer(cols = c(starts_with("CS"), starts_with("SW")), names_to = "Question", values_to = "Score") %>%
@@ -780,12 +736,18 @@ wilcoxon_rq3_sw_cs_within <- wilcoxon_results_overall %>%
     Group == "group2" ~ "Involved group",
     TRUE ~ Group))
 
+
 # Create the table with kable
 markdown_table_wilcoxon_rq3_sw_cs_within <- kable(wilcoxon_rq3_sw_cs_within, format = "markdown", 
                                                  col.names = c("Group", "W Statistic", "P-Value")) 
-                                                
+                                                 
+
 # Save the Markdown table to a text file
 writeLines(markdown_table_wilcoxon_rq3_sw_cs_within, "outputs/markdown_table_wilcox_rq3_sw_cs_within.md")
+
+
+
+
 
 # Prepare data for visualization
 # Function to calculate confidence intervals
@@ -809,9 +771,11 @@ mean_scores_with_ci <- mzp3_cleaner %>%
             Upper_CI = mean(Score, na.rm = TRUE) + qnorm(0.975) * (sd(Score, na.rm = TRUE) / sqrt(n())), .groups = 'drop')
 
 
+
 mean_scores_with_ci1 <- mean_scores_with_ci %>%
   mutate(Group = recode(Group, "group0" = "Control group", "group2" = "Involved group")) %>%
-  mutate(Type = recode(Type, "CS" = "Collective efficacy beliefs", "SW" = "Personal efficacy beliefs"))
+  mutate(Type = recode(Type, "CS" = "Collective efficacy beliefs", "SW" = "Personal efficacy beliefs")) #%>%
+  #rename(`Types of Efficacy` = Type)
 
 # Define custom colors2
 custom_colors2 <- c("#D95F02", "#E6AB02")
@@ -824,16 +788,190 @@ custom_colors2 <- c("#D95F02", "#E6AB02")
   labs(y = "\n\nMean Value") +
   theme_clean() +
   scale_fill_manual(values = custom_colors2) + 
-  theme(axis.title.x = element_blank(),            
-          axis.text.x = element_blank(),            
-          axis.ticks.x = element_blank(),            
+  theme(axis.title.x = element_blank(),            # Remove x-axis title
+          axis.text.x = element_blank(),             # Remove x-axis text
+          axis.ticks.x = element_blank(),            # Remove x-axis ticks
           legend.position = "bottom")+
-    guides(fill = guide_legend(title = NULL)))   
+    guides(fill = guide_legend(title = NULL)))    # Remove the legend title)
+
 
 ggsave(rq2b_boxplot_sw_cs_overall, file = "outputs/rq2b_boxplot_sw_cs_overall.png", width = 7, height = 5)
 
 
-### RQ3b: Comparing aim- and action-focused efficacy between and within groups at MP3 ----
+# checking level of individual questions sw vs cs ----
+# Read the Excel file
+codebook_sw_cs <- read_excel("data/data_collection/codebook_sw_cs.xlsx")
+
+# Specify the questions of interest explicitly
+questions_sw <- c("CS01_01", "CS01_02", "CS01_03", "SW01_01", "SW01_02", "SW01_03_inverse", "SW01_04", "SW01_05_inverse", "SW01_06", "SW01_07", "SW01_08")
+
+# Calculate the mean scores for the specified questions
+mean_scores_sw <- colMeans(mzp3_cleaner[, questions_sw], na.rm = TRUE)
+
+# Convert the mean scores to a data frame for plotting
+mean_scores_sw_df <- data.frame(
+  Question = names(mean_scores_sw),
+  Mean_Score = mean_scores_sw
+)
+
+# Join the dataframes by the column 'Question'
+merged_sw_cs <- left_join(mean_scores_sw_df, codebook_sw_cs, by = "Question")
+
+
+# test Wilcoxon comparing questions pairs and within groups ----
+# Specify the pairs
+pairs <- list(
+  c("CS01_01", "SW01_01"),
+  c("CS01_02", "SW01_06"),
+  c("CS01_03", "SW01_04")
+)
+
+pair_names <- c("CS01_01 & SW01_01", "CS01_02 & SW01_06", "CS01_03 & SW01_04")
+
+
+# Filter data for each group
+group0_data <- mzp3_cleaner %>% filter(Group == "group0")
+group2_data <- mzp3_cleaner %>% filter(Group == "group2")
+
+
+# Function to perform Wilcoxon signed-rank test for a given group and pair of questions
+wilcoxon_test <- function(data, pair) {
+  # Filter out rows with missing values for the current pair
+  filtered_data <- data %>% select(all_of(pair)) %>% na.omit()
+  
+  # Check if there are enough observations for the test
+  if (nrow(filtered_data) < 2) {
+    return(data.frame(
+      Pair = paste(pair[1], "and", pair[2]),
+      Statistic = NA,
+      P_Value = NA
+    ))
+  }
+  
+  test <- wilcox.test(filtered_data[[pair[1]]], filtered_data[[pair[2]]], paired = TRUE)
+  return(data.frame(
+    Pair = paste(pair[1], "and", pair[2]),
+    Statistic = test$statistic,
+    P_Value = test$p.value
+  ))
+}
+
+# Perform Wilcoxon tests for each pair within each group
+results_group0 <- lapply(pairs, wilcoxon_test, data = group0_data)
+results_group2 <- lapply(pairs, wilcoxon_test, data = group2_data)
+
+# Combine results into dataframes
+wilcoxon_results_group0 <- do.call(rbind, results_group0)
+wilcoxon_results_group2 <- do.call(rbind, results_group2)
+
+# Add Group column to the results
+wilcoxon_results_group0$Group <- "group0"
+wilcoxon_results_group2$Group <- "group2"
+
+# Combine results for both groups
+wilcoxon_results_pairs_within_groups <- rbind(wilcoxon_results_group0, wilcoxon_results_group2)
+
+# Add Significance column for stars
+wilcoxon_results_pairs_within_groups$Significance <- ifelse(wilcoxon_results$P_Value < 0.05, "*", "")
+
+
+# viz
+# Combine data for both groups
+combined_data <- mzp3_cleaner %>%
+  select(Group, all_of(unlist(pairs))) %>%
+  pivot_longer(cols = -Group, names_to = "Question", values_to = "Score")
+
+# Calculate mean scores for each group and question
+mean_scores <- combined_data %>%
+  group_by(Group, Question) %>%
+  summarize(Mean_Score = mean(Score, na.rm = TRUE), .groups = 'drop')
+
+# Create a Pair column for facet wrapping
+mean_scores <- mean_scores %>%
+  mutate(Pair = case_when(
+    Question %in% pairs[[1]] ~ "CS01_01 and SW01_01",
+    Question %in% pairs[[2]] ~ "CS01_02 and SW01_06",
+    Question %in% pairs[[3]] ~ "CS01_03 and SW01_04"
+  ))
+
+# Merge the Wilcoxon test results with the mean scores for annotation
+mean_scores <- mean_scores %>%
+  left_join(wilcoxon_results_pairs_within_groups, by = c("Pair", "Group"))
+
+# Plotting the results with annotation
+(rq2b_comparision_sw_cs_wilcox <- ggplot(mean_scores, aes(x = Question, y = Mean_Score, fill = as.factor(Group))) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
+  facet_wrap(~ Pair, scales = "free") +
+  geom_text(aes(label = Significance), position = position_dodge(width = 0.8), vjust = -0.5) +
+  labs(title = "Mean Scores for Each Group by Question Pairs",
+       x = "Question",
+       y = "Mean Score",
+       fill = "Group") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)))
+
+ggsave(rq2b_comparision_sw_cs_wilcox, file = "outputs/rq2b_comparision_sw_cs_wilcox.png", width = 7, height = 5)
+
+
+
+### comparing groups Links AAA  ----
+# add between groups and categories
+
+# Calculate the mean scores for each group and question
+group_mean_scores <- mzp3_cleaner %>%
+  select(Group, all_of(questions_sw)) %>%
+  pivot_longer(cols = -Group, names_to = "Question", values_to = "Score") #%>%
+  group_by(Group, Question) #%>%
+  summarize(Mean_Score = mean(Score, na.rm = TRUE), .groups = 'drop')
+
+# copied from above
+mean_scores_with_ci <- mzp3_cleaner %>%
+  pivot_longer(cols = c(starts_with("CS"), starts_with("SW")), names_to = "Question", values_to = "Score") %>%
+  mutate(Type = ifelse(str_detect(Question, "CS"), "CS", "SW")) #%>%
+  drop_na() %>%
+  group_by(Group, Type) %>%
+  summarize(Mean_Score = mean(Score, na.rm = TRUE),
+            Lower_CI = mean(Score, na.rm = TRUE) - qnorm(0.975) * (sd(Score, na.rm = TRUE) / sqrt(n())),
+            Upper_CI = mean(Score, na.rm = TRUE) + qnorm(0.975) * (sd(Score, na.rm = TRUE) / sqrt(n())), .groups = 'drop')
+
+
+# Join the group mean scores with the theoretical classifications
+merged_group_scores <- left_join(group_mean_scores, codebook_sw_cs, by = "Question")
+
+
+
+# If you want to view or compare within theoretical classifications:
+final_analysis <- merged_group_scores %>%
+  group_by(Theoretical_classification, Group) %>%
+  summarize(Avg_Mean_Score = mean(Mean_Score, na.rm = TRUE), .groups = 'drop')
+
+# Assuming 'merged_group_scores' contains the appropriate data from previous steps
+(rq2b_boxplot_compare_groups_linksAAA <- ggplot(merged_group_scores, aes(x = Group, y = Mean_Score, fill = Group)) +
+  geom_boxplot() +
+  facet_wrap(~ Theoretical_classification, scales = "fixed") +
+  labs(title = "Distribution of Mean Scores by Group and Classification",
+       x = "Group",
+       y = "Mean Score") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)))
+
+ggsave(rq2b_boxplot_compare_groups_linksAAA, file = "outputs/rq2b_boxplot_compare_groups_linksAAA.png", width = 7, height = 5)
+
+# Assuming there are only two groups to compare within each theoretical classification
+wilcoxon_results_sw_cs <- merged_group_scores %>%
+  group_by(Theoretical_classification) %>%
+  summarize(
+    W_test = list(wilcox.test(Mean_Score ~ Group, data = cur_data())),
+    .groups = 'drop'
+  )
+
+# Extract p-values and test statistics
+wilcoxon_results_sw_cs$P_Value <- sapply(wilcoxon_results_sw_cs$W_test, function(x) x$p.value)
+wilcoxon_results_sw_cs$Statistic <- sapply(wilcoxon_results_sw_cs$W_test, function(x) x$statistic)
+# only agent-action-aim statistically significantly different
+# show in violin plot?
+
+
 # comparing between groups aim vs action focussed ----
 # add new classification only based on aim vs action
 merged_group_scores <- merged_group_scores %>%
@@ -842,13 +980,16 @@ merged_group_scores <- merged_group_scores %>%
     TRUE ~ "action"
   ))
 
-# compare within theoretical classifications:
+
+
+
+# If you want to view or compare within theoretical classifications:
 final_analysis2 <- merged_group_scores %>%
   group_by(Theoretical_classification2, Group) %>%
   summarize(Avg_Mean_Score2 = mean(Mean_Score, na.rm = TRUE), .groups = 'drop')
 
 
-# only two groups to compare within each theoretical classification
+# Assuming there are only two groups to compare within each theoretical classification
 wilcoxon_results_aim_action <- merged_group_scores %>%
   group_by(Theoretical_classification2) %>%
   summarize(
@@ -867,6 +1008,7 @@ wilcoxon_results_aim_action$Significance <- ifelse(wilcoxon_results_aim_action$P
 wilcox_rq3_aim_action_between <- wilcoxon_results_aim_action %>%
   select(-W_test)
 
+
 markdown_table_wilcox_rq3_aim_action_between <- kable(wilcox_rq3_aim_action_between, format = "markdown", 
                                                  col.names = c("Theoretical classification", "P-Value", "W Statistic", "Significance symbol")) 
 
@@ -874,43 +1016,12 @@ markdown_table_wilcox_rq3_aim_action_between <- kable(wilcox_rq3_aim_action_betw
 # Save the Markdown table to a text file
 writeLines(markdown_table_wilcox_rq3_aim_action_between, "outputs/markdown_table_wilcox_rq3_aim_action_between.md")
 
+
+
 # Merge Wilcoxon test results back into the main dataframe for plotting
 merged_group_scores <- merged_group_scores %>%
   left_join(wilcoxon_results_aim_action %>% select(Theoretical_classification2, Significance), by = "Theoretical_classification2")
 
-# Apply CI calculation to the mean scores
-mean_scores_with_ci2 <- merged_group_scores %>%
-  group_by(Group, Theoretical_classification2) %>%
-  drop_na() %>%
-  summarize(
-    Mean_Score = mean(Score, na.rm = TRUE),
-    Lower_CI = mean(Score, na.rm = TRUE) - qnorm(0.975) * (sd(Score, na.rm = TRUE) / sqrt(n())),
-    Upper_CI = mean(Score, na.rm = TRUE) + qnorm(0.975) * (sd(Score, na.rm = TRUE) / sqrt(n())),
-    .groups = 'drop')
-
-mean_scores_with_ci2 <- mean_scores_with_ci2 %>%
-  mutate(Group = recode(Group, "group0" = "Control group", "group2" = "Involved group")) %>%
-  mutate(Theoretical_classification2 = recode(Theoretical_classification2, "action" = "Action-focused efficacy beliefs", "aim" = "Aim-focused efficacy beliefs")) #%>%
-#rename(`Types of Efficacy` = Type)
-
-# Define custom colors2
-custom_colors3 <- c("#7570B3", "#666666")
-
-# Making pretty graph
-(rq2b_boxplot_aim_action <- ggplot(mean_scores_with_ci2, aes(x = Theoretical_classification2, y = Mean_Score, fill = Theoretical_classification2)) +
-    geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
-    geom_errorbar(aes(ymin = Lower_CI, ymax = Upper_CI), width = 0.2, position = position_dodge(0.7)) +
-    facet_wrap(~ Group, scales = "fixed") +
-    labs(y = "\n\nMean Value") +
-    theme_clean() +
-    scale_fill_manual(values = custom_colors3) + 
-    theme(axis.title.x = element_blank(),          
-          axis.text.x = element_blank(),            
-          axis.ticks.x = element_blank(),            
-          legend.position = "bottom")+
-    guides(fill = guide_legend(title = NULL)))
-
-ggsave(rq2b_boxplot_aim_action, file = "outputs/rq2b_boxplot_aim_action.png", width = 7, height = 5)
 
 ### compare action vs aim within groups ----
 # Aggregate scores for aim and action questions within each group
@@ -918,9 +1029,11 @@ aggregate_scores <- merged_group_scores %>%
   group_by(Group, Theoretical_classification2) %>% 
   summarize(Aggregate_Score = mean(Mean_Score, na.rm = TRUE), .groups = 'drop')
 
+
 # Reshape data to wide format to ensure paired observations
 wide_data2 <- aggregate_scores %>%
   pivot_wider(names_from = Theoretical_classification2, values_from = Aggregate_Score)
+
 
 # Function to perform Wilcoxon signed-rank test for aggregated scores
 wilcoxon_test_aggregated2 <- function(data, group) {
@@ -947,6 +1060,7 @@ wilcoxon_results_aim_action2 <- rbind(results_group0_aa, results_group2_aa)
 # Add Significance column for stars
 wilcoxon_results_aim_action2$Significance <- ifelse(wilcoxon_results_aim_action2$P_Value < 0.05, "*", "")
 
+
 # create table
 wilcoxon_rq3_aim_action_within <- wilcoxon_results_aim_action2 %>%
   mutate(Group = as.character(Group)) %>%
@@ -955,10 +1069,92 @@ wilcoxon_rq3_aim_action_within <- wilcoxon_results_aim_action2 %>%
     Group == "group2" ~ "Involved group",
     TRUE ~ Group))
 
+
 # Create the table with kable
 markdown_table_wilcoxon_rq3_aim_action_within <- kable(wilcoxon_rq3_aim_action_within, format = "markdown", 
                                                   col.names = c("Group", "W Statistic", "P-Value")) 
 
 # Save the Markdown table to a text file
 writeLines(markdown_table_wilcoxon_rq3_aim_action_within, "outputs/markdown_table_wilcoxon_rq3_aim_action_within.md")
-```
+
+
+
+# Apply CI calculation to the mean scores
+# working!!
+mean_scores_with_ci2 <- merged_group_scores %>%
+  group_by(Group, Theoretical_classification2) %>%
+  drop_na() %>%
+  summarize(
+    Mean_Score = mean(Score, na.rm = TRUE),
+    Lower_CI = mean(Score, na.rm = TRUE) - qnorm(0.975) * (sd(Score, na.rm = TRUE) / sqrt(n())),
+    Upper_CI = mean(Score, na.rm = TRUE) + qnorm(0.975) * (sd(Score, na.rm = TRUE) / sqrt(n())),
+    .groups = 'drop')
+
+mean_scores_with_ci2 <- mean_scores_with_ci2 %>%
+  mutate(Group = recode(Group, "group0" = "Control group", "group2" = "Involved group")) %>%
+  mutate(Theoretical_classification2 = recode(Theoretical_classification2, "action" = "Action-focused efficacy beliefs", "aim" = "Aim-focused efficacy beliefs")) #%>%
+#rename(`Types of Efficacy` = Type)
+
+# Define custom colors2
+custom_colors3 <- c("#7570B3", "#666666")
+
+
+# Plotting the results with annotation and error bars
+(rq2b_bars_compare_groups_aim_action <- ggplot(mean_scores_with_ci, aes(x = Theoretical_classification2, y = Mean_Score, fill = Theoretical_classification2)) +
+  geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
+  geom_errorbar(aes(ymin = Lower_CI, ymax = Upper_CI), width = 0.2, position = position_dodge(0.7)) +
+  facet_wrap(~ Group, scales = "fixed") +
+  #geom_text(data = wilcoxon_results_aim_action,
+   #         aes(x = 1.5, y = max(mean_scores_with_ci$Upper_CI) * 1.05, label = Significance), vjust = -0.5, size = 5) +
+  labs(title = "Comparison of Mean Scores for Aim and Action Questions by Group",
+       x = "Type",
+       y = "Mean Score") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)))
+
+ggsave(rq2b_bars_compare_groups_aim_action, file = "outputs/rq2b_bars_compare_groups_aim_action.png", width = 7, height = 5)
+
+
+# plotting (same as above)
+(rq2b_boxplot_aim_action <- ggplot(mean_scores_with_ci2, aes(x = Theoretical_classification2, y = Mean_Score, fill = Theoretical_classification2)) +
+    geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
+    geom_errorbar(aes(ymin = Lower_CI, ymax = Upper_CI), width = 0.2, position = position_dodge(0.7)) +
+    facet_wrap(~ Group, scales = "fixed") +
+    labs(y = "\n\nMean Value") +
+    theme_clean() +
+    scale_fill_manual(values = custom_colors3) + 
+    theme(axis.title.x = element_blank(),            # Remove x-axis title
+          axis.text.x = element_blank(),             # Remove x-axis text
+          axis.ticks.x = element_blank(),            # Remove x-axis ticks
+          legend.position = "bottom")+
+    guides(fill = guide_legend(title = NULL)))    # Remove the legend title)
+
+ggsave(rq2b_boxplot_aim_action, file = "outputs/rq2b_boxplot_aim_action.png", width = 7, height = 5)
+
+
+# clean theme ----
+theme_clean <- function(){
+  theme_bw() +
+    theme(axis.text.x = element_text(size = 14),
+          axis.text.y = element_text(size = 14),
+          axis.title.x = element_text(size = 14, face = "plain"),             
+          axis.title.y = element_text(size = 14, face = "plain"),             
+          panel.grid.major.x = element_blank(),                                          
+          panel.grid.minor.x = element_blank(),
+          panel.grid.minor.y = element_blank(),
+          panel.grid.major.y = element_blank(),  
+          plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), units = , "cm"),
+          plot.title = element_text(size = 15, vjust = 1, hjust = 0.5),
+          legend.text = element_text(size = 12, face = "italic"),          
+          legend.title = element_text(size = 12, face = "bold"),                              
+          legend.position = c(0.2, 0.8))
+}
+
+
+
+
+# create colour palette ----
+display.brewer.pal(n = 8, name = 'Dark2')
+brewer.pal(n = 8, name = "Dark2")
+display.brewer.pal(n=4, name = "Set1")
+brewer.pal(n=4, name = "Set1")

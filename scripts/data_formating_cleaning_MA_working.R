@@ -1,7 +1,6 @@
-# Full R script analysing sustainability competencies of students
-# Master thesis project 2024, University of Freiburg
-# Daniela Gargya
-# July 2024
+# Data formating and cleaning for MA thesis MEG
+# Dani Gargya
+# June 24
 
 # loading libraries ----
 library(tidyverse)
@@ -10,7 +9,22 @@ library(dplyr)
 library(haven) # to transform data from sav to csv
 library(readr) # to transform data from sav to csv
 
-# data conversion Paulis data from sav to csv ----
+# workflow ----
+# data conversion Lisa
+# import new data and formating (from webside)
+# allocate groups (0,1,2)
+# data cleaning
+### exclude imcomplete data?
+### exclude data with more than 25% missing (6 answers)
+### exclude data that took less than 2 minutes
+# data transformation
+### scaling according to Lisa (0-3, instead of 1-4)
+### inverse scales to reflect meaning
+
+
+
+# data conversion Lisas data from sav to csv ----
+### import and convert lisas data from sav to csv
 #pre angell
 lisa_data_angell_pre <- read_sav("data/data_collection/data_pauli/ANGELL_PRE_anonym.SAV")
 write_csv(x=lisa_data_angell_pre, path="data/data_collection/data_pauli/angell_pre.csv")
@@ -19,10 +33,24 @@ write_csv(x=lisa_data_angell_pre, path="data/data_collection/data_pauli/angell_p
 lisa_data_angell_post <- read_sav("data/data_collection/data_pauli/ANGELL_POST_anonym.SAV")
 write_csv(x=lisa_data_angell_post, path="data/data_collection/data_pauli/angell_post.csv")
 
+## not needed
+# pre goethe
+#lisa_data_goethe_pre <- read_sav("data/data_collection/data_pauli/GOETHE_PRE_anonym.SAV")
+#write_csv(x=lisa_data_goethe_pre, path="data/data_collection/data_pauli/goethe_pre.csv")
 
-# import MP3 data and formating ----
+# goethe post
+#lisa_data_goethe_post <- read_sav("data/data_collection/data_pauli/GOETHE_POST_anonym.SAV")
+#write_csv(x=lisa_data_goethe_post, path="data/data_collection/data_pauli/goethe_post.csv")
+
+
+
+
+
+# import new data and formating ----
 ## copied from scoscie website: GNU R-SCript für Daten-Import
-ds_file = "rdata_KRSumfrage_2024-06-07_10-21.csv"
+ds_file = file.choose()
+# setwd("./")
+#ds_file = "rdata_KRSumfrage_2024-06-07_10-21.csv"
 options(encoding = "UTF-8")
 ds = read.delim(
   file=ds_file, encoding="UTF-8", fileEncoding="UTF-8",
@@ -69,13 +97,24 @@ row.names(ds) = ds$CASE
 
 rm(ds_file)
 
+#ds = ds_tmp
+#rm(ds_tmp)
 
-### assign treatment/ control groups ----
+### assign groups ----
 ds <- ds %>%
   mutate(Group = ifelse(WD02_01, "group2", ifelse(WD02_03, "group0", "group1")))
 
+# count occurences
+value_counts <- ds %>%
+  count(Group)  # Count occurrences of each value in col1
+
 
 # exclude incomplete data ----
+# Remove unnecessary columns with NA
+ds$SERIAL <- NULL
+ds$REF <- NULL
+ds$MAILSENT <- NULL
+
 # Function to count the number of NAs in a row
 count_nas <- function(row) {
   sum(is.na(row))
@@ -89,6 +128,7 @@ ds_filtered <- ds[ds$count_nas <= 1, ]
 
 
 # exclude data with more than 25% missing (8 answers) ----
+###### more than 8 times I don't know or does it change because more questions??!
 # Function to count the number of -1s in a row
 count_minus_ones <- function(row) {
   sum(row == -1, na.rm = TRUE)
@@ -100,10 +140,11 @@ ds_filtered$count_minus_ones <- apply(ds_filtered, 1, count_minus_ones)
 ds_filtered <- ds_filtered[ds_filtered$count_minus_ones <= 8, ]
 
 # exclude data with less than  2.5 min/ 150sec! processing time (instead of 4)----
+#ds_filtered <- ds_filtered[ds_filtered$TIME_SUM >= 240, ]
 ds_filtered <- ds_filtered[ds_filtered$TIME_SUM >= 150, ]
 
 
-# data transformation # scaling according to Pauli (0-3, instead of 1-4) ----
+# data transformation # scaling according to Lisa (0-3, instead of 1-4) ----
 # Define a function to convert values
 convert_values <- function(x) {
   x <- ifelse(x == 4, 3,
@@ -121,6 +162,15 @@ ds_scaled <- lapply(ds_filtered, convert_values)
 ds_scaled <- as.data.frame(ds_scaled)
 
 # invert certain scales to reflect meaning (AT2, B3, B4, B8, B9, SW3, SW5) ----
+# Define a function to inverse scales
+inverse_scale <- function(x) {
+  x <- ifelse(x == 3, 0,
+              ifelse(x == 2, 1,
+                     ifelse(x == 1, 2,
+                            ifelse(x == 0, 3, x))))
+  return(x)
+}
+
 # Define a function to inverse scales and add new columns
 inverse_scale_and_add_columns <- function(df, columns) {
   for (col in columns) {
@@ -129,6 +179,8 @@ inverse_scale_and_add_columns <- function(df, columns) {
   }
   return(df)
 }
+
+
 
 # Apply the function to add extra columns with inverse scales
 ds_scaled_in <- inverse_scale_and_add_columns(ds_scaled, c("AT01_02", "B001_03", "B001_04", "B001_08", "B001_09", "SW01_03", "SW01_05"))
